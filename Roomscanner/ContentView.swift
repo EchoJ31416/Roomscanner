@@ -73,7 +73,7 @@ struct ScanningView: View {
         }).buttonStyle(.borderedProminent)
           .cornerRadius(40)
           .opacity(captureController.showExportButton ? 0 : 1)
-          .padding()git 
+          .padding() 
 
     }
     //.border(width: 1.5)
