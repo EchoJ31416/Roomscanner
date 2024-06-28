@@ -8,6 +8,8 @@
 import Foundation
 import RoomPlan
 import Observation
+import ARKit
+import RealityKit
 
 @Observable 
 class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate, ObservableObject
@@ -19,6 +21,8 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
   
   var sessionConfig: RoomCaptureSession.Configuration
   var finalResult: CapturedRoom?
+    
+    var sensorLocations: [simd_float4] = []
   
   init() {
     roomCaptureView = RoomCaptureView(frame: CGRect(x: 0, y: 0, width: 42, height: 42))
@@ -33,6 +37,13 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
   
   func stopSession() {
     roomCaptureView.captureSession.stop()
+  }
+    
+  func session(_ session: ARSession, didUpdate frame: ARFrame) {
+      //roomCaptureView.captureSession.arSession.currentFrame
+    let transform = frame.camera.transform
+    let position = transform.columns.3
+    print(position.x, position.y, position.z)     // UPDATING
   }
   
   func captureView(shouldPresent roomDataForProcessing: CapturedRoomData, error: Error?) -> Bool {
@@ -54,8 +65,15 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     showShareSheet = true
   }
 
-    func addSensor(){
-        showExportButton = true
+    func addSensor() -> [Float] {
+        //showExportButton = true
+        let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
+        let transform = currentFrame!.camera.transform
+        let position = transform.columns.3
+        sensorLocations.append(position)
+        let sensorAnchor = AnchorEntity(world: simd_make_float3(position))
+        return [position.x, position.y, position.z]
+        //print(position.x, position.y, position.z)
     }
   
   required init?(coder: NSCoder) {

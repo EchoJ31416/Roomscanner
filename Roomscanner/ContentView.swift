@@ -7,6 +7,7 @@
 
 import SwiftUI
 import RoomPlan
+import ARKit
 
 struct CaptureView : UIViewRepresentable
 {
@@ -23,6 +24,7 @@ struct ActivityView: UIViewControllerRepresentable {
   var items: [Any]
   var activities: [UIActivity]? = nil
   
+  
   func makeUIViewController(context: UIViewControllerRepresentableContext<ActivityView>) -> UIActivityViewController {
     let controller = UIActivityViewController(activityItems: items, applicationActivities: activities)
     return controller
@@ -34,10 +36,14 @@ struct ActivityView: UIViewControllerRepresentable {
 struct ScanningView: View {
   @Environment(\.presentationMode) var presentationMode
   @Environment(RoomCaptureController.self) private var captureController
-  
-  
+  @State private var current_coords: [Float] = [0.0, 1.0, 0.0]
+  //@State private var coord_text: Float = (current_coords!).x ?? 0.0
+    
   var body: some View {
     @Bindable var bindableController = captureController
+     //coord_text = (current_coords == nil ? "Auughh!" : "Yippee!")
+      
+      
     
     ZStack(alignment: .bottom) {
       CaptureView()
@@ -66,14 +72,22 @@ struct ScanningView: View {
             presentationMode.wrappedValue.dismiss()
           }
         })
-        Button(action: {
-          captureController.addSensor()
-        }, label: {
-          Text("Add Sensor").font(.title2)
-        }).buttonStyle(.borderedProminent)
-          .cornerRadius(40)
-          .opacity(captureController.showExportButton ? 0 : 1)
-          .padding() 
+        HStack{
+            Button(action: {
+                current_coords = captureController.addSensor()
+            }, label: {
+                Text("Add Sensor").font(.title2)
+            }).buttonStyle(.borderedProminent)
+                .cornerRadius(40)
+                .opacity(captureController.showExportButton ? 0 : 1)
+                .padding()
+            //if let unwrapped_coords = current_coords {
+            //    Text("Coordinates are \(unwrapped_coords)") //Password is $tr0ngp@$$w0rd
+            //}
+            Text(String(format: "%.2f", current_coords[0])+", "+String(format: "%.2f", current_coords[1])+", "+String(format: "%.2f", current_coords[2]))
+                .padding()
+                .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 4))
+        }
 
     }
     //.border(width: 1.5)
