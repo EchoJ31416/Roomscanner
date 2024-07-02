@@ -39,15 +39,9 @@ struct ScanningView: View {
   @Environment(RoomCaptureController.self) private var captureController
   @State private var current_coords: [Float] = [0.0, 1.0, 0.0]
   @State private var isShowingFloorPlan = false
-  //@State private var coord_text: Float = (current_coords!).x ?? 0.0
     
   var body: some View {
     @Bindable var bindableController = captureController
-    
-
-     //coord_text = (current_coords == nil ? "Auughh!" : "Yippee!")
-      
-      
     
     ZStack(alignment: .bottom) {
       CaptureView()
@@ -58,13 +52,16 @@ struct ScanningView: View {
         })
         .navigationBarItems(trailing: Button("Done") {
           captureController.stopSession()
-          captureController.showExportButton = true
-          isShowingFloorPlan = true//(captureController.finalResult != nil)
+          //captureController.showExportButton = true
+          //isShowingFloorPlan = true//(captureController.finalResult != nil)
         }.opacity(captureController.showExportButton ? 0 : 1)).onAppear() {
           captureController.showExportButton = false
           captureController.startSession()
         }
         HStack{
+            NavigationLink(destination: PlanView(), label: {Text("Show Floor Plan")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
+                .opacity((captureController.finalResult != nil) ? 1 : 0)
+            Spacer()
             Button(action: {
                 current_coords = captureController.addSensor()
             }, label: {
@@ -105,6 +102,19 @@ struct ScanningView: View {
     }
     //.border(width: 1.5)
   }
+}
+
+struct PlanView: View{
+    @Environment(RoomCaptureController.self) private var captureController
+    
+    var body: some View{
+        SpriteView(scene: FloorPlanScene(capturedRoom: captureController.finalResult!))
+        /*if(true){
+            Text("HYaa")
+        } else{
+            Text("Ough")
+        }*/
+    }
 }
 
 struct ContentView: View {
