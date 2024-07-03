@@ -13,6 +13,7 @@
 		CE7DCD422C33AC6B008EBFA2 /* FloorPlanSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DCD3D2C33AC6B008EBFA2 /* FloorPlanSurface.swift */; };
 		CE7DCD462C33AEAB008EBFA2 /* CGPoint+RotateAround.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DCD432C33AEAB008EBFA2 /* CGPoint+RotateAround.swift */; };
 		CE7DCD472C33AEAB008EBFA2 /* simd_float4x4+EulerAnglesAndPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DCD442C33AEAB008EBFA2 /* simd_float4x4+EulerAnglesAndPosition.swift */; };
+		CE7DCD492C34058C008EBFA2 /* FloorPlanSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DCD482C34058C008EBFA2 /* FloorPlanSensor.swift */; };
 		CF79BA52287EC88400979CF2 /* RoomscannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF79BA51287EC88400979CF2 /* RoomscannerApp.swift */; };
 		CF79BA54287EC88400979CF2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF79BA53287EC88400979CF2 /* ContentView.swift */; };
 		CF79BA56287EC88500979CF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF79BA55287EC88500979CF2 /* Assets.xcassets */; };
@@ -41,6 +42,7 @@
 		CE7DCD3D2C33AC6B008EBFA2 /* FloorPlanSurface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloorPlanSurface.swift; sourceTree = "<group>"; };
 		CE7DCD432C33AEAB008EBFA2 /* CGPoint+RotateAround.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+RotateAround.swift"; sourceTree = "<group>"; };
 		CE7DCD442C33AEAB008EBFA2 /* simd_float4x4+EulerAnglesAndPosition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "simd_float4x4+EulerAnglesAndPosition.swift"; sourceTree = "<group>"; };
+		CE7DCD482C34058C008EBFA2 /* FloorPlanSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloorPlanSensor.swift; sourceTree = "<group>"; };
 		CF79BA4E287EC88400979CF2 /* Roomscanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Roomscanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF79BA51287EC88400979CF2 /* RoomscannerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomscannerApp.swift; sourceTree = "<group>"; };
 		CF79BA53287EC88400979CF2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 			children = (
 				CE7DCD3A2C33AC6B008EBFA2 /* DrawParameters.swift */,
 				CE7DCD3B2C33AC6B008EBFA2 /* FloorPlanObject.swift */,
+				CE7DCD482C34058C008EBFA2 /* FloorPlanSensor.swift */,
 				CE7DCD3C2C33AC6B008EBFA2 /* FloorPlanScene.swift */,
 				CE7DCD3D2C33AC6B008EBFA2 /* FloorPlanSurface.swift */,
 			);
@@ -192,6 +195,7 @@
 				CF79BA60287FFDF200979CF2 /* RoomCaptureController.swift in Sources */,
 				CE7DCD402C33AC6B008EBFA2 /* FloorPlanObject.swift in Sources */,
 				CE7DCD412C33AC6B008EBFA2 /* FloorPlanScene.swift in Sources */,
+				CE7DCD492C34058C008EBFA2 /* FloorPlanSensor.swift in Sources */,
 				CE7DCD3F2C33AC6B008EBFA2 /* DrawParameters.swift in Sources */,
 				CE7DCD462C33AEAB008EBFA2 /* CGPoint+RotateAround.swift in Sources */,
 				CE7DCD422C33AC6B008EBFA2 /* FloorPlanSurface.swift in Sources */,

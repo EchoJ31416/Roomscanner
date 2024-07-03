@@ -15,12 +15,14 @@ class FloorPlanScene: SKScene {
     // Surfaces and objects from our scan result
     private let surfaces: [CapturedRoom.Surface]
     private let objects: [CapturedRoom.Object]
+    private let sensors: [simd_float4]
     
     // MARK: - Init
     
-    init(capturedRoom: CapturedRoom) {
+    init(capturedRoom: CapturedRoom, sensorLocations: [simd_float4]) {
         self.surfaces = capturedRoom.doors + capturedRoom.openings + capturedRoom.walls + capturedRoom.windows
         self.objects = capturedRoom.objects
+        self.sensors = sensorLocations
         
         super.init(size: CGSize(width: 1500, height: 1500))
         
@@ -32,6 +34,7 @@ class FloorPlanScene: SKScene {
         
         drawSurfaces()
         drawObjects()
+        drawSensors()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -61,6 +64,17 @@ class FloorPlanScene: SKScene {
         for object in objects {
             let objectNode = FloorPlanObject(capturedObject: object)
             addChild(objectNode)
+        }
+    }
+    
+    private func drawSensors(){
+        /*for sensor in sensors {
+            let sensorNode = FloorPlanSensor()
+            addChild(sensorNode)
+        }*/
+        for sensor in sensors {
+            let sensorNode = FloorPlanSensor(capturedSensor: sensor)
+            addChild(sensorNode)
         }
     }
     

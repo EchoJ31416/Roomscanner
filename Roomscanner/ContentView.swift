@@ -108,7 +108,7 @@ struct PlanView: View{
     @Environment(RoomCaptureController.self) private var captureController
     
     var body: some View{
-        SpriteView(scene: FloorPlanScene(capturedRoom: captureController.finalResult!))
+        SpriteView(scene: FloorPlanScene(capturedRoom: captureController.finalResult!, sensorLocations: captureController.sensorLocations))
         /*if(true){
             Text("HYaa")
         } else{

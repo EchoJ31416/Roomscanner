@@ -2,8 +2,8 @@
   "colors" : [
     {
       "color" : {
-        "platform" : "osx",
-        "reference" : "linkColor"
+        "platform" : "ios",
+        "reference" : "systemBlueColor"
       },
       "idiom" : "universal"
     }
