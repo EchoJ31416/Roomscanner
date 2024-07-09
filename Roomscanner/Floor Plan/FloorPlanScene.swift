@@ -16,6 +16,7 @@ class FloorPlanScene: SKScene {
     private let surfaces: [CapturedRoom.Surface]
     private let objects: [CapturedRoom.Object]
     private let sensors: [simd_float4]
+
     
     // MARK: - Init
     
@@ -35,6 +36,7 @@ class FloorPlanScene: SKScene {
         drawSurfaces()
         drawObjects()
         drawSensors()
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
