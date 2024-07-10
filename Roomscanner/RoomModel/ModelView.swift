@@ -2,17 +2,18 @@ import SwiftUI
 import SceneKit
 import SceneKit.ModelIO
 
+
+
 struct ModelView: View {
     //@Environment(RoomCaptureController.self) private var captureController
     var sensors: [Sensor] = []
     var scene = makeScene()
-    @ObservedObject var viewModel = ViewModel()//[Sensor(location: simd_make_float4(5.0))])
+    @ObservedObject var viewModel = ViewModel()
     
     
     init(sensors: [Sensor]){
         //@Bindable var bindableController = captureController
-        //captureController.export()
-        let urlPath = FileManager.default.temporaryDirectory.appending(path: "scan.usdz") 
+        let urlPath = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
         let mdlAsset = MDLAsset(url: urlPath)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
@@ -27,13 +28,11 @@ struct ModelView: View {
             node.simdPosition = sensor.getLocation()
             node.name = "Sensor: \(sensor.getTag())"
             scene?.rootNode.addChildNode(node)
-            //node?.geometry? = SCNSphere
         }
     }
   
     static func makeScene() -> SCNScene? {
         let scene = SCNScene(named: "RoomPlan Scene.scn")
-        //applyTextures(to: scene)
         return scene
     }
     
@@ -47,12 +46,27 @@ struct ModelView: View {
             .background(Color.white)
             .edgesIgnoringSafeArea(.all)
             VStack {
-                if let sensor = viewModel.selectedSensor {
-                    Text("\(sensor.getTag())")
-                        .padding(8)
-                        .background(Color.blue)
-                        .cornerRadius(14)
-                        .padding(12)
+                HStack{
+                    if let sensor = viewModel.selectedSensor {
+                        Text("\(sensor.getTag())")
+                            .padding(8)
+                            .background(Color.blue)
+                            .cornerRadius(14)
+                            .padding(12)
+                    }
+                    Button(action: {
+                      self.export()
+                    }, label: {
+                      Text("Export").font(.title2)
+                    }).buttonStyle(.borderedProminent)
+                      .cornerRadius(40)
+                      .opacity(1)
+                      .padding()
+                      //.sheet(isPresented: $bindableController.showShareSheet, content:{
+                      //  ActivityView(items: [self.exportUrl!]).onDisappear() {
+                      //    presentationMode.wrappedValue.dismiss()
+                     //   }
+                      //})
                 }
 
                 Spacer()
@@ -92,13 +106,10 @@ struct ModelView: View {
             .childNode(withName: "camera", recursively: false)
     
         if let sensorNode = sensor.flatMap(sensorNode(sensor:)) {
-      // 2
             let constraint = SCNLookAtConstraint(target: sensorNode)
             cameraNode?.constraints = [constraint]
-      // 3
             let globalPosition = sensorNode
                 .convertPosition(SCNVector3(x: 5, y: 1, z: 0), to: nil)
-      // 4
             let move = SCNAction.move(to: globalPosition, duration: 1.0)
             cameraNode?.runAction(move)
         }
@@ -107,6 +118,13 @@ struct ModelView: View {
   
     func sensorNode(sensor: Sensor) -> SCNNode? {
         scene?.rootNode.childNode(withName: "Sensor: \(sensor.getTag())", recursively: false)
+    }
+    
+    func export() {
+        var exportUrl = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
+        scene?.write(to: exportUrl, delegate: nil)
+     
+        //showShareSheet = true
     }
 }
 

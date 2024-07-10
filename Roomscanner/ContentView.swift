@@ -39,7 +39,6 @@ struct ScanningView: View {
   @Environment(\.presentationMode) var presentationMode
   @Environment(RoomCaptureController.self) private var captureController
   @State private var current_coords: [Float] = [0.0, 1.0, 0.0]
-  @State private var isShowingFloorPlan = false
     
   var body: some View {
     @Bindable var bindableController = captureController
@@ -54,15 +53,11 @@ struct ScanningView: View {
         .navigationBarItems(trailing: Button("Done") {
           captureController.stopSession()
           captureController.showExportButton = true
-          //isShowingFloorPlan = true//(captureController.finalResult != nil)
         }.opacity(captureController.showExportButton ? 0 : 1)).onAppear() {
           captureController.showExportButton = false
           captureController.startSession()
         }
         HStack{
-            //NavigationLink(destination: PlanView(), label: {Text("Show Floor Plan")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
-            //    .opacity((captureController.finalResult != nil) ? 1 : 0)
-            //    .padding(.leading)
             NavigationLink(destination: ModelView(sensors: captureController.sensorLocations), label: {Text("Show 3D Model")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
                 .opacity((captureController.finalResult != nil) ? 1 : 0)
                 .padding(.leading)
@@ -75,23 +70,20 @@ struct ScanningView: View {
                 .cornerRadius(40)
                 .opacity(captureController.showExportButton ? 0 : 1)
                 .padding()
-            //if let unwrapped_coords = current_coords {
-            //    Text("Coordinates are \(unwrapped_coords)") //Password is $tr0ngp@$$w0rd
-            //}
-            Spacer()
-            Button(action: {
-              captureController.export()
-            }, label: {
-              Text("Export").font(.title2)
-            }).buttonStyle(.borderedProminent)
-              .cornerRadius(40)
-              .opacity(captureController.showExportButton ? 1 : 0)
-              .padding()
-              .sheet(isPresented: $bindableController.showShareSheet, content:{
-                ActivityView(items: [captureController.exportUrl!]).onDisappear() {
-                  presentationMode.wrappedValue.dismiss()
-                }
-              })
+//            Spacer()
+//            Button(action: {
+//              captureController.export()
+//            }, label: {
+//              Text("Export").font(.title2)
+//            }).buttonStyle(.borderedProminent)
+//              .cornerRadius(40)
+//              .opacity(captureController.showExportButton ? 1 : 0)
+//              .padding()
+//              .sheet(isPresented: $bindableController.showShareSheet, content:{
+//                ActivityView(items: [captureController.exportUrl!]).onDisappear() {
+//                  presentationMode.wrappedValue.dismiss()
+//                }
+//              })
             Spacer()
             Text(String(format: "%.2f", current_coords[0])+", "+String(format: "%.2f", current_coords[1])+", "+String(format: "%.2f", current_coords[2]))
                 .padding()
@@ -101,43 +93,6 @@ struct ScanningView: View {
     }
   }
 }
-
-/*struct PlanView: View{
-    @Environment(\.presentationMode) var presentationMode
-    @Environment(RoomCaptureController.self) private var captureController
-    
-    var body: some View{
-        @Bindable var bindableController = captureController
-        
-        ZStack{
-            SpriteView(scene: FloorPlanScene(capturedRoom: captureController.finalResult!, sensorLocations: captureController.sensorLocations))
-            .navigationBarItems(trailing: Button("Export") {
-                captureController.exportImage()
-            })
-                .sheet(isPresented: $bindableController.showShareSheet, content:{
-                      ActivityView(items: [captureController.exportUrl!]).onDisappear() {
-                        presentationMode.wrappedValue.dismiss()
-                      }
-                    })
-
-            
-        }
-    }
-}*/
-
-/*struct ModelView: View{
-    @Environment(\.presentationMode) var presentationMode
-    @Environment(RoomCaptureController.self) private var captureController
-    
-    var body: some View{
-        @Bindable var bindableController = captureController
-        
-        ZStack{
-            SceneView(scene: RoomModelScene(roomURL: captureController.exportLink(), sensorLocations: captureController.sensorLocations))
-            
-        }
-    }
-}*/
 
 struct ContentView: View {
   var body: some View {

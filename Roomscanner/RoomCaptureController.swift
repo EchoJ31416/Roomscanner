@@ -73,30 +73,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         //showShareSheet = true
     }
     
-    func exportLink() -> URL{
-        exportUrl = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
-        do {
-          try finalResult?.export(to: exportUrl!)
-        } catch {
-          print("Error exporting usdz scan.")
-        }
-        return exportUrl!
-    }
-    
-    func exportImage() {
-      exportUrl = FileManager.default.temporaryDirectory.appending(path: "plan.png")
-      do {
-        try finalResult?.export(to: exportUrl!)
-      } catch {
-        print("Error exporting floorplan png.")
-        return
-      }
-      showShareSheet = true
-    }
-    
-
     func addSensor() -> [Float] {
-        //showExportButton = true
         let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
         let transform = currentFrame!.camera.transform
         let position = simd_make_float3(transform.columns.3)
@@ -105,7 +82,6 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         sensorLocations.append(sensor)
         let sensorAnchor = AnchorEntity(world: position)
         return [position.x, position.y, position.z]
-        //print(position.x, position.y, position.z)
     }
   
     required init?(coder: NSCoder) {
