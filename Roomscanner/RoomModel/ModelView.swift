@@ -8,12 +8,14 @@ struct ModelView: View {
     @ObservedObject var viewModel = ViewModel()//[Sensor(location: simd_make_float4(5.0))])
     
     init(sensors: [Sensor]){
+        var node: SCNNode
         self.sensors = sensors
         viewModel.sensorList = self.sensors
         for sensor in self.sensors{
-            let identifier = "\(sensor.getTag())"
-            let node = scene?.rootNode
-                .childNode(withName: identifier, recursively: false)
+            node = SCNNode(geometry: SCNSphere(radius: 0.1))
+            node.simdPosition = sensor.getLocation()
+            node.name = "\(sensor.getTag())"
+            scene?.rootNode.addChildNode(node)
             //node?.geometry? = SCNSphere
         }
     }

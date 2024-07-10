@@ -10,19 +10,19 @@ import RealityKit
 import RoomPlan
 
 class Sensor{
-    private var location: simd_float4
+    private var location: simd_float3
     private var tag: Int
     
-    init(location: simd_float4, tag: Int = 0){
+    init(location: simd_float3, tag: Int = 0){
         self.location = location
         self.tag = tag
     }
     
-    func getLocation() -> simd_float4{
+    func getLocation() -> simd_float3{
         return self.location
     }
     
-    func setLocation(location: simd_float4){
+    func setLocation(location: simd_float3){
         self.location = location
     }
     

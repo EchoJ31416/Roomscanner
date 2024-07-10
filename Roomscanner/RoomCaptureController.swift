@@ -98,11 +98,11 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         //showExportButton = true
         let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
         let transform = currentFrame!.camera.transform
-        let position = transform.columns.3
+        let position = simd_make_float3(transform.columns.3)
         var sensor = Sensor(location: position, tag: sensorID)
         sensorID = sensorID + 1
         sensorLocations.append(sensor)
-        let sensorAnchor = AnchorEntity(world: simd_make_float3(position))
+        let sensorAnchor = AnchorEntity(world: position)
         return [position.x, position.y, position.z]
         //print(position.x, position.y, position.z)
     }
