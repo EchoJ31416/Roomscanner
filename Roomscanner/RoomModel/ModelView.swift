@@ -1,20 +1,31 @@
 import SwiftUI
 import SceneKit
+import SceneKit.ModelIO
 
 struct ModelView: View {
-    @Environment(RoomCaptureController.self) private var captureController
+    //@Environment(RoomCaptureController.self) private var captureController
     var sensors: [Sensor] = []
     var scene = makeScene()
     @ObservedObject var viewModel = ViewModel()//[Sensor(location: simd_make_float4(5.0))])
     
+    
     init(sensors: [Sensor]){
+        //@Bindable var bindableController = captureController
+        //captureController.export()
+        let urlPath = FileManager.default.temporaryDirectory.appending(path: "scan.usdz") 
+        let mdlAsset = MDLAsset(url: urlPath)
+        let asset = mdlAsset.object(at: 0) // extract first object
+        let assetNode = SCNNode(mdlObject: asset)
+        scene?.rootNode.addChildNode(assetNode)
         var node: SCNNode
         self.sensors = sensors
         viewModel.sensorList = self.sensors
         for sensor in self.sensors{
-            node = SCNNode(geometry: SCNSphere(radius: 0.1))
+            node = SCNNode(geometry: SCNSphere(radius: 0.04))
+            node.geometry?.firstMaterial?.diffuse.contents = UIColor.black
+            node.castsShadow = true
             node.simdPosition = sensor.getLocation()
-            node.name = "\(sensor.getTag())"
+            node.name = "Sensor: \(sensor.getTag())"
             scene?.rootNode.addChildNode(node)
             //node?.geometry? = SCNSphere
         }
@@ -25,28 +36,7 @@ struct ModelView: View {
         //applyTextures(to: scene)
         return scene
     }
-  
-    /*static func applyTextures(to scene: SCNScene?){
-        for sensor in self.sensors{
-            let identifier = sensor.rawValue
-      
-            let node = scene?.rootNode
-                .childNode(withName: identifier, recursively: false)
-      
-            let texture = UIImage(named: identifier)
-      
-            node?.geometry?.firstMaterial?.diffuse.contents = texture
-        }
     
-        let skyboxImages = (1...6).map { UIImage(named: "skybox\($0)") }
-        // 2
-        scene?.background.contents = skyboxImages
-    }*/
-  
-    
-  
-    
-
     var body: some View {
         ZStack {
             SceneView(
@@ -77,7 +67,7 @@ struct ModelView: View {
                         }
                     }
                     Spacer()
-                    Text("\(sensors.count)")
+                    Text("\(String(describing: sensorNode(sensor: viewModel.selectedSensor ?? Sensor(location: simd_float3(-100.0, -100.0, -100.0), tag: -1))))")
                     Text("\(String(describing: viewModel.selectedSensor?.getLocation()))")
                     Spacer()
                     Text(viewModel.title).foregroundColor(.white)
@@ -107,7 +97,7 @@ struct ModelView: View {
             cameraNode?.constraints = [constraint]
       // 3
             let globalPosition = sensorNode
-                .convertPosition(SCNVector3(x: 50, y: 10, z: 0), to: nil)
+                .convertPosition(SCNVector3(x: 5, y: 1, z: 0), to: nil)
       // 4
             let move = SCNAction.move(to: globalPosition, duration: 1.0)
             cameraNode?.runAction(move)
@@ -122,6 +112,6 @@ struct ModelView: View {
 
 struct ModelView_Previews: PreviewProvider {
     static var previews: some View {
-        ModelView(sensors: [])
+        ModelView(sensors: [Sensor(location: simd_float3(0.0, 1.0, 0.0))])
     }
 }

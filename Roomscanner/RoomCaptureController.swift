@@ -59,6 +59,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
   
     func captureView(didPresent processedResult: CapturedRoom, error: Error?) {
         finalResult = processedResult
+        self.export()
     }
   
     func export() {
@@ -69,7 +70,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
             print("Error exporting usdz scan.")
             return
         }
-        showShareSheet = true
+        //showShareSheet = true
     }
     
     func exportLink() -> URL{
