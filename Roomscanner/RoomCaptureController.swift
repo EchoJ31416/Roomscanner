@@ -83,6 +83,14 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         let sensorAnchor = AnchorEntity(world: position)
         return [position.x, position.y, position.z]
     }
+    
+    func clearSensors() {
+        sensorLocations = []
+    }
+    
+    func clearResults() {
+        finalResult = nil
+    }
   
     required init?(coder: NSCoder) {
         fatalError("Not needed.")

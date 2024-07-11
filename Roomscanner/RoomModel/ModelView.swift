@@ -5,7 +5,7 @@ import SceneKit.ModelIO
 
 
 struct ModelView: View {
-    //@Environment(RoomCaptureController.self) private var captureController
+    @Environment(RoomCaptureController.self) private var captureController
     var sensors: [Sensor] = []
     var scene = makeScene()
     var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
@@ -16,7 +16,6 @@ struct ModelView: View {
     
     
     init(sensors: [Sensor]){
-        //@Bindable var bindableController = captureController
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
@@ -40,6 +39,8 @@ struct ModelView: View {
     }
     
     var body: some View {
+        @Bindable var bindableController = captureController
+        
         ZStack {
             SceneView(
                 scene: scene,
@@ -48,6 +49,10 @@ struct ModelView: View {
             )
             .background(Color.white)
             .edgesIgnoringSafeArea(.all)
+            .navigationBarItems(trailing: Button("Done") {
+                captureController.clearSensors()
+                captureController.clearResults()
+            }.opacity(1))
             VStack {
                 HStack{
                     if let sensor = viewModel.selectedSensor {
