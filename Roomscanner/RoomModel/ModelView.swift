@@ -52,6 +52,8 @@ struct ModelView: View {
             .navigationBarItems(trailing: Button("Done") {
                 captureController.clearSensors()
                 captureController.clearResults()
+                captureController.stopSession()
+                presentationMode.wrappedValue.dismiss()
             }.opacity(1))
             VStack {
                 HStack{
