@@ -58,14 +58,14 @@ struct ScanningView: View {
           captureController.startSession()
         }
         HStack{
-            NavigationLink(destination: ModelView(sensors: captureController.sensorLocations), label: {Text("Show 3D Model")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
+            NavigationLink(destination: ModelView(devices: captureController.deviceLocations), label: {Text("Show 3D Model")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
                 .opacity((captureController.finalResult != nil) ? 1 : 0)
                 .padding(.leading)
             Spacer()
             Button(action: {
-                current_coords = captureController.addSensor()
+                current_coords = captureController.addDevice()
             }, label: {
-                Text("Add Sensor").font(.title2)
+                Text("Add Device").font(.title2)
             }).buttonStyle(.borderedProminent)
                 .cornerRadius(40)
                 .opacity(captureController.showExportButton ? 0 : 1)

@@ -2,36 +2,36 @@ import Foundation
 import RoomPlan
 
 class ViewModel: NSObject, ObservableObject {
-    @Published var selectedSensor: Sensor?
-    @Published var sensorList: [Sensor] = []
+    @Published var selectedDevice: Device?
+    @Published var deviceList: [Device] = []
     var Index: Int = 0
     
     var title: String {
-        "\(selectedSensor?.getTag())" ?? ""
+        "\(selectedDevice?.getTag())" ?? ""
     }
 
-    func selectNextSensor() {
+    func selectNextDevice() {
         changeSelection(offset: 1)
     }
 
-    func selectPreviousSensor() {
+    func selectPreviousDevice() {
         changeSelection(offset: -1)
     }
 
     func clearSelection() {
-        selectedSensor = nil
+        selectedDevice = nil
     }
 
     private func changeSelection(offset: Int) {
         let newIndex = Index + offset
 
         if newIndex < 0 {
-            Index = sensorList.endIndex-1
-        } else if newIndex < sensorList.endIndex {
+            Index = deviceList.endIndex-1
+        } else if newIndex < deviceList.endIndex {
             Index = newIndex
         } else {
             Index = 0
         }
-        self.selectedSensor = sensorList[Index]
+        self.selectedDevice = deviceList[Index]
     }
 }

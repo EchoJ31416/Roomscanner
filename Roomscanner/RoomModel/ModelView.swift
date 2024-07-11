@@ -6,7 +6,7 @@ import SceneKit.ModelIO
 
 struct ModelView: View {
     @Environment(RoomCaptureController.self) private var captureController
-    var sensors: [Sensor] = []
+    var devices: [Device] = []
     var scene = makeScene()
     var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
     var exportURL = FileManager.default.temporaryDirectory.appending(path: "room.usdz")
@@ -15,20 +15,20 @@ struct ModelView: View {
     @Environment(\.presentationMode) var presentationMode
     
     
-    init(sensors: [Sensor]){
+    init(devices: [Device]){
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
         scene?.rootNode.addChildNode(assetNode)
         var node: SCNNode
-        self.sensors = sensors
-        viewModel.sensorList = self.sensors
-        for sensor in self.sensors{
+        self.devices = devices
+        viewModel.deviceList = self.devices
+        for device in self.devices{
             node = SCNNode(geometry: SCNSphere(radius: 0.04))
             node.geometry?.firstMaterial?.diffuse.contents = UIColor.black
             node.castsShadow = true
-            node.simdPosition = sensor.getLocation()
-            node.name = "Sensor: \(sensor.getTag())"
+            node.simdPosition = device.getLocation()
+            node.name = "Device: \(device.getTag())"
             scene?.rootNode.addChildNode(node)
         }
     }
@@ -44,21 +44,21 @@ struct ModelView: View {
         ZStack {
             SceneView(
                 scene: scene,
-                pointOfView: setUpCamera(sensor: viewModel.selectedSensor),
-                options: viewModel.selectedSensor == nil ? [.allowsCameraControl] : []
+                pointOfView: setUpCamera(device: viewModel.selectedDevice),
+                options: viewModel.selectedDevice == nil ? [.allowsCameraControl] : []
             )
             .background(Color.white)
             .edgesIgnoringSafeArea(.all)
             .navigationBarItems(trailing: Button("Done") {
-                captureController.clearSensors()
+                captureController.clearDevices()
                 captureController.clearResults()
                 captureController.stopSession()
                 presentationMode.wrappedValue.dismiss()
             }.opacity(1))
             VStack {
                 HStack{
-                    if let sensor = viewModel.selectedSensor {
-                        Text("\(sensor.getTag())")
+                    if let device = viewModel.selectedDevice {
+                        Text("\(device.getTag())")
                             .padding(8)
                             .background(Color.blue)
                             .cornerRadius(14)
@@ -83,21 +83,21 @@ struct ModelView: View {
 
                 HStack {
                     HStack {
-                        Button(action: viewModel.selectPreviousSensor) {
+                        Button(action: viewModel.selectPreviousDevice) {
                             Image(systemName: "arrow.backward.circle.fill")
                         }
-                        Button(action: viewModel.selectNextSensor) {
+                        Button(action: viewModel.selectNextDevice) {
                             Image(systemName: "arrow.forward.circle.fill")
                         }
                     }
                     Spacer()
-                    Text("\(String(describing: sensorNode(sensor: viewModel.selectedSensor ?? Sensor(location: simd_float3(-100.0, -100.0, -100.0), tag: -1))))")
-                    Text("\(String(describing: viewModel.selectedSensor?.getLocation()))")
+                    Text("\(String(describing: deviceNode(device: viewModel.selectedDevice ?? Device(location: simd_float3(-100.0, -100.0, -100.0), tag: -1))))")
+                    Text("\(String(describing: viewModel.selectedDevice?.getLocation()))")
                     Spacer()
                     Text(viewModel.title).foregroundColor(.white)
                     Spacer()
 
-                    if viewModel.selectedSensor != nil {
+                    if viewModel.selectedDevice != nil {
                         Button(action: viewModel.clearSelection) {
                             Image(systemName: "xmark.circle.fill")
                         }
@@ -111,14 +111,14 @@ struct ModelView: View {
         }
     }
   
-    func setUpCamera(sensor: Sensor?) -> SCNNode? {
+    func setUpCamera(device: Device?) -> SCNNode? {
         let cameraNode = scene?.rootNode
             .childNode(withName: "camera", recursively: false)
     
-        if let sensorNode = sensor.flatMap(sensorNode(sensor:)) {
-            let constraint = SCNLookAtConstraint(target: sensorNode)
+        if let deviceNode = device.flatMap(deviceNode(device:)) {
+            let constraint = SCNLookAtConstraint(target: deviceNode)
             cameraNode?.constraints = [constraint]
-            let globalPosition = sensorNode
+            let globalPosition = deviceNode
                 .convertPosition(SCNVector3(x: 5, y: 1, z: 0), to: nil)
             let move = SCNAction.move(to: globalPosition, duration: 1.0)
             cameraNode?.runAction(move)
@@ -126,8 +126,8 @@ struct ModelView: View {
         return cameraNode
     }
   
-    func sensorNode(sensor: Sensor) -> SCNNode? {
-        scene?.rootNode.childNode(withName: "Sensor: \(sensor.getTag())", recursively: false)
+    func deviceNode(device: Device) -> SCNNode? {
+        scene?.rootNode.childNode(withName: "Device: \(device.getTag())", recursively: false)
     }
     
     func export() {
@@ -139,6 +139,6 @@ struct ModelView: View {
 
 struct ModelView_Previews: PreviewProvider {
     static var previews: some View {
-        ModelView(sensors: [Sensor(location: simd_float3(0.0, 1.0, 0.0))])
+        ModelView(devices: [Device(location: simd_float3(0.0, 1.0, 0.0))])
     }
 }

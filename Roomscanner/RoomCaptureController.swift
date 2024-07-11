@@ -22,9 +22,9 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     //private var arConfig: ARWorldTrackingConfiguration
     var sessionConfig: RoomCaptureSession.Configuration
     var finalResult: CapturedRoom?
-    var sensorID: Int = 0
+    var deviceID: Int = 0
     
-    var sensorLocations: [Sensor] = []
+    var deviceLocations: [Device] = []
   
     init() {
         //let arConfig = ARWorldTrackingConfiguration()
@@ -73,19 +73,19 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         //showShareSheet = true
     }
     
-    func addSensor() -> [Float] {
+    func addDevice() -> [Float] {
         let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
         let transform = currentFrame!.camera.transform
         let position = simd_make_float3(transform.columns.3)
-        var sensor = Sensor(location: position, tag: sensorID)
-        sensorID = sensorID + 1
-        sensorLocations.append(sensor)
-        let sensorAnchor = AnchorEntity(world: position)
+        var device = Device(location: position, tag: deviceID)
+        deviceID = deviceID + 1
+        deviceLocations.append(device)
+        let deviceAnchor = AnchorEntity(world: position)
         return [position.x, position.y, position.z]
     }
     
-    func clearSensors() {
-        sensorLocations = []
+    func clearDevices() {
+        deviceLocations = []
     }
     
     func clearResults() {
