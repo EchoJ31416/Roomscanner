@@ -42,6 +42,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CE74024D2C3E921E0002DFFC /* DataTypes */ = {
+			isa = PBXGroup;
+			children = (
+				CE783C2D2C37B38D00AC3A13 /* Sensor.swift */,
+			);
+			path = DataTypes;
+			sourceTree = "<group>";
+		};
 		CE7646472C36686B00B5A928 /* RoomModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -71,9 +79,9 @@
 		CF79BA50287EC88400979CF2 /* Roomscanner */ = {
 			isa = PBXGroup;
 			children = (
+				CE74024D2C3E921E0002DFFC /* DataTypes */,
 				CF79BA5F287FFDF200979CF2 /* RoomCaptureController.swift */,
 				CF79BA51287EC88400979CF2 /* RoomscannerApp.swift */,
-				CE783C2D2C37B38D00AC3A13 /* Sensor.swift */,
 				CF79BA53287EC88400979CF2 /* ContentView.swift */,
 				CE7646472C36686B00B5A928 /* RoomModel */,
 				CF79BA55287EC88500979CF2 /* Assets.xcassets */,

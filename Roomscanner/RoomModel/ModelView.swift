@@ -8,13 +8,16 @@ struct ModelView: View {
     //@Environment(RoomCaptureController.self) private var captureController
     var sensors: [Sensor] = []
     var scene = makeScene()
+    var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
+    var exportURL = FileManager.default.temporaryDirectory.appending(path: "room.usdz")
+    @State var showShareSheet = false
     @ObservedObject var viewModel = ViewModel()
+    @Environment(\.presentationMode) var presentationMode
     
     
     init(sensors: [Sensor]){
         //@Bindable var bindableController = captureController
-        let urlPath = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
-        let mdlAsset = MDLAsset(url: urlPath)
+        let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
         scene?.rootNode.addChildNode(assetNode)
@@ -55,18 +58,18 @@ struct ModelView: View {
                             .padding(12)
                     }
                     Button(action: {
-                      self.export()
+                        self.export()
                     }, label: {
                       Text("Export").font(.title2)
                     }).buttonStyle(.borderedProminent)
                       .cornerRadius(40)
                       .opacity(1)
                       .padding()
-                      //.sheet(isPresented: $bindableController.showShareSheet, content:{
-                      //  ActivityView(items: [self.exportUrl!]).onDisappear() {
-                      //    presentationMode.wrappedValue.dismiss()
-                     //   }
-                      //})
+                      .sheet(isPresented: $showShareSheet, content:{
+                          ActivityView(items: [self.exportURL]).onDisappear() {
+                              presentationMode.wrappedValue.dismiss()
+                        }
+                      })
                 }
 
                 Spacer()
@@ -121,10 +124,9 @@ struct ModelView: View {
     }
     
     func export() {
-        var exportUrl = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
-        scene?.write(to: exportUrl, delegate: nil)
-     
-        //showShareSheet = true
+        scene?.write(to: self.exportURL, delegate: nil)
+        
+        showShareSheet = true
     }
 }
 
