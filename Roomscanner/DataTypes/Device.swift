@@ -14,20 +14,36 @@ class Device{
     private var tag: Int
     private var onCeiling: Bool
     private var size: Float
-    private enum category: String, CaseIterable{
-        case sensor
-        case airConditioning
-        case heater
-        case fan
-        case airSupply
-        case airReturn
-        case airExchange
-        case doorOpen
-        case windowOpen
+    enum category: String, CaseIterable, Identifiable{
+        case Sensor
+        case AirConditioning
+        case Heater
+        case Fan
+        case AirSupply
+        case AirReturn
+        case AirExchange
+        case DoorOpen
+        case WindowOpen
         
+        var id: Self { self }
     }
     
-    init(location: simd_float3, tag: Int = 0, onCeiling: Bool = false, size: Float = 0){
+    enum conditioningType: String, CaseIterable, Identifiable{
+        case window
+        case split
+        
+        var id: Self { self }
+    }
+    
+    enum supplyType: String, CaseIterable, Identifiable{
+        case freshAirDuct
+        case exhaustAirDuct
+        case supplyAirDuct
+        
+        var id: Self { self }
+    }
+    
+    init(location: simd_float3 = simd_make_float3(0, 0, 0), tag: Int = 0, onCeiling: Bool = false, size: Float = 0){
         self.location = location
         self.tag = tag
         self.onCeiling = onCeiling

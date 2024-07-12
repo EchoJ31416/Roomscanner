@@ -11,6 +11,7 @@
 		CE783C2A2C37AE5B00AC3A13 /* ModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE783C292C37AE5B00AC3A13 /* ModelView.swift */; };
 		CE783C2C2C37AF5000AC3A13 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE783C2B2C37AF5000AC3A13 /* ViewModel.swift */; };
 		CE783C2E2C37B38D00AC3A13 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE783C2D2C37B38D00AC3A13 /* Device.swift */; };
+		CE84004B2C4106D600314F71 /* DeviceEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE84004A2C4106D600314F71 /* DeviceEditorView.swift */; };
 		CF79BA52287EC88400979CF2 /* RoomscannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF79BA51287EC88400979CF2 /* RoomscannerApp.swift */; };
 		CF79BA54287EC88400979CF2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF79BA53287EC88400979CF2 /* ContentView.swift */; };
 		CF79BA56287EC88500979CF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF79BA55287EC88500979CF2 /* Assets.xcassets */; };
@@ -23,6 +24,7 @@
 		CE783C292C37AE5B00AC3A13 /* ModelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelView.swift; sourceTree = "<group>"; };
 		CE783C2B2C37AF5000AC3A13 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		CE783C2D2C37B38D00AC3A13 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		CE84004A2C4106D600314F71 /* DeviceEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEditorView.swift; sourceTree = "<group>"; };
 		CF79BA4E287EC88400979CF2 /* Roomscanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Roomscanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF79BA51287EC88400979CF2 /* RoomscannerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomscannerApp.swift; sourceTree = "<group>"; };
 		CF79BA53287EC88400979CF2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -46,6 +48,7 @@
 			isa = PBXGroup;
 			children = (
 				CE783C2D2C37B38D00AC3A13 /* Device.swift */,
+				CE84004A2C4106D600314F71 /* DeviceEditorView.swift */,
 			);
 			path = DataTypes;
 			sourceTree = "<group>";
@@ -170,6 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF79BA60287FFDF200979CF2 /* RoomCaptureController.swift in Sources */,
+				CE84004B2C4106D600314F71 /* DeviceEditorView.swift in Sources */,
 				CE783C2A2C37AE5B00AC3A13 /* ModelView.swift in Sources */,
 				CE783C2C2C37AF5000AC3A13 /* ViewModel.swift in Sources */,
 				CF79BA54287EC88400979CF2 /* ContentView.swift in Sources */,
