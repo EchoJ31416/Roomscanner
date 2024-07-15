@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import ARKit
 
 struct DeviceEditorView: View {
     @Binding var onScreen: Bool
     @Environment(RoomCaptureController.self) private var captureController
     @State private var device = Device()
+    @State private var location: simd_float3? = nil
     @State private var deviceTag: Int = -1
     @State private var deviceOnCeiling: Bool = false
     @State private var deviceSize: Float = 0.0
@@ -51,10 +53,8 @@ struct DeviceEditorView: View {
                 }.opacity(selectedDevice == .AirSupply ? 1 : 0)
             }
             Button(action: {
-                captureController.addDevice()
+                captureController.addDevice(position: captureController.getLocation())
                 onScreen = false
-                  //  .dismi
-                //showingDeviceManager.toggle()
             }, label: {
                 Text("Done").font(.title2)
             })  .buttonStyle(.borderedProminent)

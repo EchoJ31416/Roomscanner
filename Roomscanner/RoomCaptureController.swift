@@ -70,18 +70,20 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
             print("Error exporting usdz scan.")
             return
         }
-        //showShareSheet = true
     }
     
-    func addDevice() -> [Float] {
+    func getLocation() -> simd_float3 {
         let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
         let transform = currentFrame!.camera.transform
         let position = simd_make_float3(transform.columns.3)
+        return position
+    }
+    
+    func addDevice(position: simd_float3){
         var device = Device(location: position, tag: deviceID)
         deviceID = deviceID + 1
         deviceLocations.append(device)
         let deviceAnchor = AnchorEntity(world: position)
-        return [position.x, position.y, position.z]
     }
     
     func clearDevices() {

@@ -64,7 +64,7 @@ struct ScanningView: View {
                     .padding(.leading)
                 Spacer()
                 Button(action: {
-                    current_coords = captureController.addDevice()
+                    //current_coords = captureController.getLocation()
                     showingDeviceManager.toggle()
                 }, label: {
                     Text("Add Device").font(.title2)
@@ -73,15 +73,13 @@ struct ScanningView: View {
                     .opacity(captureController.showExportButton ? 0 : 1)
                     .padding()
                     .sheet(isPresented: $showingDeviceManager, content:{
-                        DeviceEditorView(onScreen: $showingDeviceManager)//.onDisappear() {
-                        //    presentationMode.wrappedValue.dismiss()
-                        //}
+                        DeviceEditorView(onScreen: $showingDeviceManager)
                     })
                 Spacer()
-                Text(String(format: "%.2f", current_coords[0])+", "+String(format: "%.2f", current_coords[1])+", "+String(format: "%.2f", current_coords[2]))
+                /*Text(String(format: "%.2f", current_coords[0])+", "+String(format: "%.2f", current_coords[1])+", "+String(format: "%.2f", current_coords[2]))
                     .padding()
                     .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 4))
-                    .padding()
+                    .padding()*/
             }
         }
     }
