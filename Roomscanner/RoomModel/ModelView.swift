@@ -57,31 +57,22 @@ struct ModelView: View {
                 presentationMode.wrappedValue.dismiss()
             }.opacity(1))
             VStack {
-                HStack{
-                    if let device = viewModel.selectedDevice {
-                        Text("\(device.getTag())")
-                            .padding(8)
-                            .background(Color.blue)
-                            .cornerRadius(14)
-                            .padding(12)
-                    }
-                    Button(action: {
-                        self.export()
-                    }, label: {
-                      Text("Export").font(.title2)
-                    }).buttonStyle(.borderedProminent)
-                      .cornerRadius(40)
-                      .opacity(1)
-                      .padding()
-                      .sheet(isPresented: $showShareSheet, content:{
-                          ActivityView(items: [self.exportURL]).onDisappear() {
-                              presentationMode.wrappedValue.dismiss()
+                Button(action: {
+                    self.export()
+                }, label: {
+                    Text("Export").font(.title2)
+                }).buttonStyle(.borderedProminent)
+                    .cornerRadius(40)
+                    .opacity(1)
+                    .padding()
+                    .sheet(isPresented: $showShareSheet, content:{
+                        ActivityView(items: [self.exportURL]).onDisappear() {
+                            presentationMode.wrappedValue.dismiss()
                         }
-                      })
-                }
-
+                    })
+                    
                 Spacer()
-
+                
                 HStack {
                     HStack {
                         Button(action: viewModel.selectPreviousDevice) {
@@ -91,23 +82,27 @@ struct ModelView: View {
                             Image(systemName: "arrow.forward.circle.fill")
                         }
                     }
-                    Spacer()
-                    Text("\(String(describing: deviceNode(device: viewModel.selectedDevice ?? Device(location: simd_float3(-100.0, -100.0, -100.0), tag: -1))))")
-                    Text("\(String(describing: viewModel.selectedDevice?.getLocation()))")
-                    Spacer()
-                    Text(viewModel.title).foregroundColor(.white)
-                    Spacer()
-
-                    if viewModel.selectedDevice != nil {
-                        Button(action: viewModel.clearSelection) {
-                            Image(systemName: "xmark.circle.fill")
+                    if let device = viewModel.selectedDevice {
+                        Spacer()
+                        Text("Device Tag: \(device.getTag())")
+                        Spacer()
+                        let location = device.getLocation()
+                        Text("Location: [\(String(format: "%.2f", location.x)), \(String(format: "%.2f", location.y)), \(String(format: "%.2f", location.z))]")
+                        Spacer()
+                        Text("Type: \(device.getType())")
+                        Spacer()
+                        
+                        if viewModel.selectedDevice != nil {
+                            Button(action: viewModel.clearSelection) {
+                                Image(systemName: "xmark.circle.fill")
+                            }
                         }
                     }
                 }
-                .padding(8)
-                .background(Color.green)
-                .cornerRadius(14)
-                .padding(12)
+                    .padding(8)
+                    .background(Color.green)
+                    .cornerRadius(14)
+                    .padding(12)
             }
         }
     }

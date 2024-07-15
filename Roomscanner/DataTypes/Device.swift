@@ -52,6 +52,9 @@ class Device{
         self.type = type
     }
     
+    func getType() -> String{
+        return type.rawValue
+    }
     func getLocation() -> simd_float3{
         return self.location
     }
