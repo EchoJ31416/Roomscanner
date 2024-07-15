@@ -9,7 +9,6 @@ import SwiftUI
 import RoomPlan
 import ARKit
 import _SpriteKit_SwiftUI
-import _SceneKit_SwiftUI
 
 struct CaptureView : UIViewRepresentable
 {
@@ -53,19 +52,15 @@ struct ScanningView: View {
         })
         .navigationBarItems(trailing: Button("Done") {
           captureController.stopSession()
-          captureController.showExportButton = true
+          //captureController.showExportButton = true
           //isShowingFloorPlan = true//(captureController.finalResult != nil)
         }.opacity(captureController.showExportButton ? 0 : 1)).onAppear() {
           captureController.showExportButton = false
           captureController.startSession()
         }
         HStack{
-            //NavigationLink(destination: PlanView(), label: {Text("Show Floor Plan")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
-            //    .opacity((captureController.finalResult != nil) ? 1 : 0)
-            //    .padding(.leading)
-            NavigationLink(destination: ModelView(sensors: captureController.sensorLocations), label: {Text("Show 3D Model")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
+            NavigationLink(destination: PlanView(), label: {Text("Show Floor Plan")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
                 .opacity((captureController.finalResult != nil) ? 1 : 0)
-                .padding(.leading)
             Spacer()
             Button(action: {
                 current_coords = captureController.addSensor()
@@ -82,7 +77,7 @@ struct ScanningView: View {
             Button(action: {
               captureController.export()
             }, label: {
-              Text("Export").font(.title2)
+              Text("Export: \($isShowingFloorPlan)").font(.title2)
             }).buttonStyle(.borderedProminent)
               .cornerRadius(40)
               .opacity(captureController.showExportButton ? 1 : 0)
@@ -98,46 +93,29 @@ struct ScanningView: View {
                 .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 4))
                 .padding()
         }
+
     }
+    .fullScreenCover(isPresented: $isShowingFloorPlan) {
+        Text(captureController.finalResult != nil ? "Yippee!" : "Augghhh!")
+        //SpriteView(scene: FloorPlanScene(capturedRoom: captureController.finalResult!))
+            .ignoresSafeArea()
+    }
+    //.border(width: 1.5)
   }
 }
 
-/*struct PlanView: View{
-    @Environment(\.presentationMode) var presentationMode
+struct PlanView: View{
     @Environment(RoomCaptureController.self) private var captureController
     
     var body: some View{
-        @Bindable var bindableController = captureController
-        
-        ZStack{
-            SpriteView(scene: FloorPlanScene(capturedRoom: captureController.finalResult!, sensorLocations: captureController.sensorLocations))
-            .navigationBarItems(trailing: Button("Export") {
-                captureController.exportImage()
-            })
-                .sheet(isPresented: $bindableController.showShareSheet, content:{
-                      ActivityView(items: [captureController.exportUrl!]).onDisappear() {
-                        presentationMode.wrappedValue.dismiss()
-                      }
-                    })
-
-            
-        }
+        SpriteView(scene: FloorPlanScene(capturedRoom: captureController.finalResult!, sensorLocations: captureController.sensorLocations))
+        /*if(true){
+            Text("HYaa")
+        } else{
+            Text("Ough")
+        }*/
     }
-}*/
-
-/*struct ModelView: View{
-    @Environment(\.presentationMode) var presentationMode
-    @Environment(RoomCaptureController.self) private var captureController
-    
-    var body: some View{
-        @Bindable var bindableController = captureController
-        
-        ZStack{
-            SceneView(scene: RoomModelScene(roomURL: captureController.exportLink(), sensorLocations: captureController.sensorLocations))
-            
-        }
-    }
-}*/
+}
 
 struct ContentView: View {
   var body: some View {

@@ -7,11 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CE7646492C3668AB00B5A928 /* RoomModelScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7646482C3668AB00B5A928 /* RoomModelScene.swift */; };
-		CE783C282C37A2A500AC3A13 /* RoomPlan Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = CE783C272C37A2A500AC3A13 /* RoomPlan Scene.scn */; };
-		CE783C2A2C37AE5B00AC3A13 /* ModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE783C292C37AE5B00AC3A13 /* ModelView.swift */; };
-		CE783C2C2C37AF5000AC3A13 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE783C2B2C37AF5000AC3A13 /* ViewModel.swift */; };
-		CE783C2E2C37B38D00AC3A13 /* Sensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE783C2D2C37B38D00AC3A13 /* Sensor.swift */; };
 		CE7DCD3F2C33AC6B008EBFA2 /* DrawParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DCD3A2C33AC6B008EBFA2 /* DrawParameters.swift */; };
 		CE7DCD402C33AC6B008EBFA2 /* FloorPlanObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DCD3B2C33AC6B008EBFA2 /* FloorPlanObject.swift */; };
 		CE7DCD412C33AC6B008EBFA2 /* FloorPlanScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DCD3C2C33AC6B008EBFA2 /* FloorPlanScene.swift */; };
@@ -26,12 +21,21 @@
 		CF79BA60287FFDF200979CF2 /* RoomCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF79BA5F287FFDF200979CF2 /* RoomCaptureController.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		73586F352A8E28F000AFCB49 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = file.bplist;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+			);
+			script = "# builtin-copyPlist\n";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXFileReference section */
-		CE7646482C3668AB00B5A928 /* RoomModelScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomModelScene.swift; sourceTree = "<group>"; };
-		CE783C272C37A2A500AC3A13 /* RoomPlan Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "RoomPlan Scene.scn"; sourceTree = "<group>"; };
-		CE783C292C37AE5B00AC3A13 /* ModelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelView.swift; sourceTree = "<group>"; };
-		CE783C2B2C37AF5000AC3A13 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
-		CE783C2D2C37B38D00AC3A13 /* Sensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sensor.swift; sourceTree = "<group>"; };
 		CE7DCD3A2C33AC6B008EBFA2 /* DrawParameters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawParameters.swift; sourceTree = "<group>"; };
 		CE7DCD3B2C33AC6B008EBFA2 /* FloorPlanObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloorPlanObject.swift; sourceTree = "<group>"; };
 		CE7DCD3C2C33AC6B008EBFA2 /* FloorPlanScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloorPlanScene.swift; sourceTree = "<group>"; };
@@ -58,17 +62,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CE7646472C36686B00B5A928 /* RoomModel */ = {
-			isa = PBXGroup;
-			children = (
-				CE783C272C37A2A500AC3A13 /* RoomPlan Scene.scn */,
-				CE7646482C3668AB00B5A928 /* RoomModelScene.swift */,
-				CE783C2B2C37AF5000AC3A13 /* ViewModel.swift */,
-				CE783C292C37AE5B00AC3A13 /* ModelView.swift */,
-			);
-			path = RoomModel;
-			sourceTree = "<group>";
-		};
 		CE7DCD3E2C33AC6B008EBFA2 /* Floor Plan */ = {
 			isa = PBXGroup;
 			children = (
@@ -109,13 +102,11 @@
 		CF79BA50287EC88400979CF2 /* Roomscanner */ = {
 			isa = PBXGroup;
 			children = (
-				CF79BA5F287FFDF200979CF2 /* RoomCaptureController.swift */,
-				CF79BA51287EC88400979CF2 /* RoomscannerApp.swift */,
-				CE783C2D2C37B38D00AC3A13 /* Sensor.swift */,
-				CF79BA53287EC88400979CF2 /* ContentView.swift */,
-				CE7646472C36686B00B5A928 /* RoomModel */,
 				CE7DCD452C33AEAB008EBFA2 /* Extensions */,
 				CE7DCD3E2C33AC6B008EBFA2 /* Floor Plan */,
+				CF79BA5F287FFDF200979CF2 /* RoomCaptureController.swift */,
+				CF79BA51287EC88400979CF2 /* RoomscannerApp.swift */,
+				CF79BA53287EC88400979CF2 /* ContentView.swift */,
 				CF79BA55287EC88500979CF2 /* Assets.xcassets */,
 				CF79BA57287EC88500979CF2 /* Preview Content */,
 			);
@@ -142,6 +133,7 @@
 				CF79BA4C287EC88400979CF2 /* Resources */,
 			);
 			buildRules = (
+				73586F352A8E28F000AFCB49 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -189,7 +181,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF79BA59287EC88500979CF2 /* Preview Assets.xcassets in Resources */,
-				CE783C282C37A2A500AC3A13 /* RoomPlan Scene.scn in Resources */,
 				CF79BA56287EC88500979CF2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -202,19 +193,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF79BA60287FFDF200979CF2 /* RoomCaptureController.swift in Sources */,
-				CE7646492C3668AB00B5A928 /* RoomModelScene.swift in Sources */,
-				CE783C2A2C37AE5B00AC3A13 /* ModelView.swift in Sources */,
 				CE7DCD402C33AC6B008EBFA2 /* FloorPlanObject.swift in Sources */,
 				CE7DCD412C33AC6B008EBFA2 /* FloorPlanScene.swift in Sources */,
 				CE7DCD492C34058C008EBFA2 /* FloorPlanSensor.swift in Sources */,
-				CE783C2C2C37AF5000AC3A13 /* ViewModel.swift in Sources */,
 				CE7DCD3F2C33AC6B008EBFA2 /* DrawParameters.swift in Sources */,
 				CE7DCD462C33AEAB008EBFA2 /* CGPoint+RotateAround.swift in Sources */,
 				CE7DCD422C33AC6B008EBFA2 /* FloorPlanSurface.swift in Sources */,
 				CF79BA54287EC88400979CF2 /* ContentView.swift in Sources */,
 				CE7DCD472C33AEAB008EBFA2 /* simd_float4x4+EulerAnglesAndPosition.swift in Sources */,
 				CF79BA52287EC88400979CF2 /* RoomscannerApp.swift in Sources */,
-				CE783C2E2C37B38D00AC3A13 /* Sensor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
