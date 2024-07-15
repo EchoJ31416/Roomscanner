@@ -23,9 +23,10 @@ struct ModelView: View {
         var node: SCNNode
         self.devices = devices
         viewModel.deviceList = self.devices
+        let geometry = SCNSphere(radius: 0.04)
+        geometry.firstMaterial?.diffuse.contents = UIColor.black
         for device in self.devices{
-            node = SCNNode(geometry: SCNSphere(radius: 0.04))
-            node.geometry?.firstMaterial?.diffuse.contents = UIColor.black
+            node = SCNNode(geometry: geometry)
             node.castsShadow = true
             node.simdPosition = device.getLocation()
             node.name = "Device: \(device.getTag())"

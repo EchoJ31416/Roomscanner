@@ -73,7 +73,7 @@ struct ScanningView: View {
                     .opacity(captureController.showExportButton ? 0 : 1)
                     .padding()
                     .sheet(isPresented: $showingDeviceManager, content:{
-                        DeviceEditorView()//.onDisappear() {
+                        DeviceEditorView(onScreen: $showingDeviceManager)//.onDisappear() {
                         //    presentationMode.wrappedValue.dismiss()
                         //}
                     })

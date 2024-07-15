@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DeviceEditorView: View {
+    @Binding var onScreen: Bool
     @Environment(RoomCaptureController.self) private var captureController
     @State private var device = Device()
     @State private var deviceTag: Int = -1
@@ -51,6 +52,7 @@ struct DeviceEditorView: View {
             }
             Button(action: {
                 captureController.addDevice()
+                onScreen = false
                   //  .dismi
                 //showingDeviceManager.toggle()
             }, label: {
