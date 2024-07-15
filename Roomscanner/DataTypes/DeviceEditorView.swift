@@ -51,9 +51,13 @@ struct DeviceEditorView: View {
                         Text(supplier.rawValue).tag(supplier)
                     }
                 }.opacity(selectedDevice == .AirSupply ? 1 : 0)
+                Toggle(isOn: $deviceOnCeiling){
+                    Text("Is the device on the ceiling?")
+                }
             }
             Button(action: {
-                captureController.addDevice(position: captureController.getLocation())
+                device = Device(location: captureController.getLocation(), onCeiling: deviceOnCeiling, type: selectedDevice)
+                captureController.addDevice(device: device)//position: captureController.getLocation())
                 onScreen = false
             }, label: {
                 Text("Done").font(.title2)

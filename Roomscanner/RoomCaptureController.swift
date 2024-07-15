@@ -79,11 +79,11 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         return position
     }
     
-    func addDevice(position: simd_float3){
-        var device = Device(location: position, tag: deviceID)
+    func addDevice(device: Device){
+        //var device = Device(location: position, tag: deviceID)
         deviceID = deviceID + 1
         deviceLocations.append(device)
-        let deviceAnchor = AnchorEntity(world: position)
+        //let deviceAnchor = AnchorEntity(world: position)
     }
     
     func clearDevices() {

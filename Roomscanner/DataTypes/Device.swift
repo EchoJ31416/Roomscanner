@@ -27,6 +27,7 @@ class Device{
         
         var id: Self { self }
     }
+    private var type = category.Sensor
     
     enum conditioningType: String, CaseIterable, Identifiable{
         case window
@@ -43,11 +44,12 @@ class Device{
         var id: Self { self }
     }
     
-    init(location: simd_float3 = simd_make_float3(0, 0, 0), tag: Int = 0, onCeiling: Bool = false, size: Float = 0){
+    init(location: simd_float3 = simd_make_float3(0, 0, 0), tag: Int = 0, onCeiling: Bool = false, size: Float = 0, type: category = category.Sensor){
         self.location = location
         self.tag = tag
         self.onCeiling = onCeiling
         self.size = size
+        self.type = type
     }
     
     func getLocation() -> simd_float3{
