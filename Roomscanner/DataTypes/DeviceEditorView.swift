@@ -19,6 +19,7 @@ struct DeviceEditorView: View {
     @State private var selectedDevice: Device.category = .Sensor
     @State private var conditioningType: Device.conditioningType = .window
     @State private var supplyType: Device.supplyType = .freshAirDuct
+    //@State private var number: Int?
 //    List {
 //        Picker("Device Type", selection: Device.category) {
 //            Text("Chocolate").tag(Flavor.chocolate)
@@ -41,6 +42,7 @@ struct DeviceEditorView: View {
                         Text(device.rawValue).tag(device)
                     }
                 }
+                TextField("Device Tag: Integer Only", value: $deviceTag, format: IntegerFormatStyle())
                 Picker("Air Conditioning Type", selection: $conditioningType) {
                     ForEach(Device.conditioningType.allCases) { conditioner in
                         Text(conditioner.rawValue).tag(conditioner)
@@ -56,7 +58,7 @@ struct DeviceEditorView: View {
                 }
             }
             Button(action: {
-                device = Device(location: captureController.getLocation(), onCeiling: deviceOnCeiling, type: selectedDevice)
+                device = Device(location: captureController.getLocation(), tag: deviceTag, onCeiling: deviceOnCeiling, type: selectedDevice)
                 captureController.addDevice(device: device)//position: captureController.getLocation())
                 onScreen = false
             }, label: {

@@ -81,8 +81,10 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     
     func addDevice(device: Device){
         //var device = Device(location: position, tag: deviceID)
-        device.setTag(tag: deviceID)
-        deviceID = deviceID + 1
+        if device.getTag() == -1{
+            device.setTag(tag: deviceID)
+            deviceID = deviceID + 1
+        }
         deviceLocations.append(device)
         //let deviceAnchor = AnchorEntity(world: position)
     }
