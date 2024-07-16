@@ -68,6 +68,15 @@ class Device{
     func getType() -> String{
         return type.rawValue
     }
+    
+    func getConditionerType() -> String{
+        return conditioner.rawValue
+    }
+    
+    func getSupplierType() -> String{
+        return supplier.rawValue
+    }
+    
     func getLocation() -> simd_float3{
         return self.location
     }

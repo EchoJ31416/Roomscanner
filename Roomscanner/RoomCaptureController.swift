@@ -72,6 +72,36 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         }
     }
     
+    func generateCSV() -> URL {
+        var fileURL: URL!
+        // heading of CSV file.
+        let heading = "Tag, X, Y, Z, Device Category, On Ceiling, Size,  Air Conditioner Type, Air Supply Type\n"
+        
+        // file rows
+        let rows = deviceLocations.map { "\($0.getTag()),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.getType()),\($0.getOnCeiling()),\($0.getSize()),\($0.getConditionerType()),\($0.getSupplierType())" }
+        
+        // rows to string data
+        let stringData = heading + rows.joined(separator: "\n")
+        
+        do {
+            
+            let path = try FileManager.default.url(for: .documentDirectory,
+                                                   in: .allDomainsMask,
+                                                   appropriateFor: nil,
+                                                   create: false)
+            
+            fileURL = path.appendingPathComponent("Devices.csv")
+            
+            // append string data to file
+            try stringData.write(to: fileURL, atomically: true , encoding: .utf8)
+            print(fileURL!)
+            
+        } catch {
+            print("error generating csv file")
+        }
+        return fileURL
+    }
+    
     func getLocation() -> simd_float3 {
         let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
         let transform = currentFrame!.camera.transform

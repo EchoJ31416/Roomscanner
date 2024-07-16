@@ -57,19 +57,29 @@ struct ModelView: View {
                 presentationMode.wrappedValue.dismiss()
             }.opacity(1))
             VStack {
-                Button(action: {
-                    self.export()
-                }, label: {
-                    Text("Export").font(.title2)
-                }).buttonStyle(.borderedProminent)
+                HStack{
+                    Button(action: {
+                        self.export()
+                    }, label: {
+                        Text("Export").font(.title2)
+                    }).buttonStyle(.borderedProminent)
+                        .cornerRadius(40)
+                        .opacity(1)
+                        .padding()
+                        .sheet(isPresented: $showShareSheet, content:{
+                            ActivityView(items: [self.exportURL]).onDisappear() {
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                        })
+                    Spacer()
+                    ShareLink(item:captureController.generateCSV()) {
+                        Label("Export CSV", systemImage: "list.bullet.rectangle.portrait")
+                    }
+                    .buttonStyle(.borderedProminent)
                     .cornerRadius(40)
-                    .opacity(1)
                     .padding()
-                    .sheet(isPresented: $showShareSheet, content:{
-                        ActivityView(items: [self.exportURL]).onDisappear() {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    })
+                    
+                }
                     
                 Spacer()
                 
