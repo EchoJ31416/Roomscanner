@@ -9,3 +9,6 @@ Steps:
 4. Once done, press "Done" button
 5. Wait for "Show 3D Model" button to appear, then press it
 6. Export file once done checking the finalizedd 3D model
+
+
+Big thanks to deurell (https://github.com/deurell) for providing the initial Roomscanner code that this was all build on.
