@@ -19,19 +19,6 @@ struct DeviceEditorView: View {
     @State private var selectedDevice: Device.category = .Sensor
     @State private var conditioningType: Device.conditioningType = .NA
     @State private var supplyType: Device.supplyType = .NA
-    //@State private var number: Int?
-//    List {
-//        Picker("Device Type", selection: Device.category) {
-//            Text("Chocolate").tag(Flavor.chocolate)
-//            Text("Vanilla").tag(Flavor.vanilla)
-//            Text("Strawberry").tag(Flavor.strawberry)
-//        }
-//    }
-//    Picker("Device Type", selection: Device.category) {
-//        ForEach(Flavor.allCases) { flavor in
-//            Text(flavor.rawValue.capitalized)
-//        }
-//    }
     
     var body: some View {
         @Bindable var bindableController = captureController
@@ -39,7 +26,7 @@ struct DeviceEditorView: View {
             List{
                 Picker("Device Type", selection: $selectedDevice) {
                     ForEach(Device.category.allCases) { device in
-                        Text(device.rawValue).tag(device)
+                        Text(self.device.categoryConverter(category: device)).tag(device)
                     }
                 }
                 HStack{
@@ -51,15 +38,14 @@ struct DeviceEditorView: View {
                     TextField("Device Size", value: $deviceSize, format: FloatingPointFormatStyle())
                 }.opacity(selectedDevice != .Sensor ? 1 : 0)
                 Picker("Air Conditioner Type", selection: $conditioningType) {
-                    Text("N/A").tag(Device.conditioningType.NA)
-                    Text("Window Air Conditioner").tag(Device.conditioningType.window)
-                    Text("Split Air Conditioner").tag(Device.conditioningType.split)
+                    ForEach(Device.conditioningType.allCases) { conditioner in
+                        Text(self.device.conditionerConverter(conditioner: conditioner)).tag(conditioner)
+                    }
                 }.opacity(selectedDevice == .AirConditioning ? 1 : 0)
                 Picker("Air Supply Type", selection: $supplyType) {
-                    Text("N/A").tag(Device.supplyType.NA)
-                    Text("Fresh Air Duct").tag(Device.supplyType.freshAirDuct)
-                    Text("Exhaust Air Duct").tag(Device.supplyType.exhaustAirDuct)
-                    Text("Supply Air Duct").tag(Device.supplyType.supplyAirDuct)
+                    ForEach(Device.supplyType.allCases) { supplier in
+                        Text(self.device.supplierConverter(supplier: supplier)).tag(supplier)
+                    }
                 }.opacity(selectedDevice == .AirSupply ? 1 : 0)
                 Toggle(isOn: $deviceOnCeiling){
                     Text("Is the device on the ceiling?")

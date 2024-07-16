@@ -65,16 +65,62 @@ class Device{
         self.supplier = supplier
     }
     
+    func getRawType() -> category{
+        return type
+    }
+    
     func getType() -> String{
-        return type.rawValue
+        return self.categoryConverter(category: self.getRawType())
+    }
+    
+    func categoryConverter(category: Device.category) -> String{
+        switch category {
+        case .Sensor: return "Sensor"
+        case .AirConditioning: return "Air Conditioner"
+        case .Heater: return "Heater"
+        case .Fan: return "Fan"
+        case .AirSupply: return "Air Supplier"
+        case .AirReturn: return "Air Return"
+        case .AirExchange: return "Air Exchanger"
+        case .DoorOpen: return "Open door"
+        case .WindowOpen: return "Open window"
+        default: return "Unknown Device"
+        }
+    }
+    
+    func getRawConditioner() -> conditioningType{
+        return conditioner
     }
     
     func getConditionerType() -> String{
-        return conditioner.rawValue
+        return self.conditionerConverter(conditioner: self.getRawConditioner())
+    }
+    
+    func conditionerConverter(conditioner: Device.conditioningType) -> String{
+        switch conditioner {
+        case .window: return "Window Air Conditioner"
+        case .split: return "Split Air Conditioner"
+        case .NA: return "N/A"
+        default: return "Unknown Air Conditioner"
+        }
+    }
+    
+    func getRawSupplier() -> supplyType{
+        return supplier
     }
     
     func getSupplierType() -> String{
-        return supplier.rawValue
+        return self.supplierConverter(supplier: self.getRawSupplier())
+    }
+    
+    func supplierConverter(supplier: Device.supplyType) -> String{
+        switch supplier{
+        case .freshAirDuct: return "Fresh Air Duct"
+        case .exhaustAirDuct: return "Exhaust Air Duct"
+        case .supplyAirDuct: return "Supply Air Duct"
+        case .NA: return "N/A"
+        default: return "Unknown Air Supplier"
+        }
     }
     
     func getLocation() -> simd_float3{
