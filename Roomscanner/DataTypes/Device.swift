@@ -32,17 +32,21 @@ class Device{
     enum conditioningType: String, CaseIterable, Identifiable{
         case window
         case split
+        case NA
         
         var id: Self { self }
     }
+    private var conditioner = conditioningType.NA
     
     enum supplyType: String, CaseIterable, Identifiable{
         case freshAirDuct
         case exhaustAirDuct
         case supplyAirDuct
+        case NA
         
         var id: Self { self }
     }
+    private var supplier = supplyType.NA
     
     init(location: simd_float3 = simd_make_float3(0, 0, 0), tag: Int = 0, onCeiling: Bool = false, size: Float = 0, type: category = category.Sensor){
         self.location = location
