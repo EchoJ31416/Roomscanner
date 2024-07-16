@@ -59,6 +59,13 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
   
     func captureView(didPresent processedResult: CapturedRoom, error: Error?) {
         finalResult = processedResult
+        let maxHeight = self.highestPoint()
+        for device in self.deviceLocations {
+            if device.getOnCeiling() {
+                var oldLocation = device.getLocation()
+                device.setLocation(location: simd_make_float3(oldLocation.x, maxHeight, oldLocation.z))
+            }
+        }
         self.export()
     }
   
@@ -125,6 +132,17 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     
     func clearResults() {
         finalResult = nil
+    }
+    
+    func highestPoint() -> Float{
+        let walls = finalResult?.walls ?? []
+        var maxHeight: Float = 0
+        for wall in walls {
+            if wall.dimensions.y > maxHeight{
+                maxHeight = wall.dimensions.y
+            }
+        }
+        return maxHeight
     }
   
     required init?(coder: NSCoder) {
