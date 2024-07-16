@@ -15,7 +15,8 @@ struct DeviceEditorView: View {
     @State private var location: simd_float3? = nil
     @State private var deviceTag: Int = -1
     @State private var deviceOnCeiling: Bool = false
-    @State private var deviceSize: Float = 0.0
+    @State private var deviceLength: Float = 0.0
+    @State private var deviceWidth: Float = 0.0
     @State private var selectedDevice: Device.category = .Sensor
     @State private var conditioningType: Device.conditioningType = .NA
     @State private var supplyType: Device.supplyType = .NA
@@ -34,8 +35,12 @@ struct DeviceEditorView: View {
                     TextField("Device Tag", value: $deviceTag, format: IntegerFormatStyle())
                 }
                 HStack{
-                    Text("Device Size (cm^2): ")
-                    TextField("Device Size", value: $deviceSize, format: FloatingPointFormatStyle())
+                    Text("Device Length (cm): ")
+                    TextField("Device Length", value: $deviceLength, format: FloatingPointFormatStyle())
+                }.opacity(selectedDevice != .Sensor ? 1 : 0)
+                HStack{
+                    Text("Device Width (cm): ")
+                    TextField("Device Width", value: $deviceWidth, format: FloatingPointFormatStyle())
                 }.opacity(selectedDevice != .Sensor ? 1 : 0)
                 Picker("Air Conditioner Type", selection: $conditioningType) {
                     ForEach(Device.conditioningType.allCases) { conditioner in
@@ -55,7 +60,8 @@ struct DeviceEditorView: View {
                 device = Device(location: captureController.getLocation(), 
                                 tag: deviceTag,
                                 onCeiling: deviceOnCeiling,
-                                size: deviceSize,
+                                length: deviceLength,
+                                width: deviceWidth,
                                 type: selectedDevice,
                                 conditioner: conditioningType,
                                 supplier: supplyType)
