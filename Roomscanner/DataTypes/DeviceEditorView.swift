@@ -66,7 +66,13 @@ struct DeviceEditorView: View {
                 }
             }
             Button(action: {
-                device = Device(location: captureController.getLocation(), tag: deviceTag, onCeiling: deviceOnCeiling, size: deviceSize, type: selectedDevice)
+                device = Device(location: captureController.getLocation(), 
+                                tag: deviceTag,
+                                onCeiling: deviceOnCeiling,
+                                size: deviceSize,
+                                type: selectedDevice,
+                                conditioner: conditioningType,
+                                supplier: supplyType)
                 captureController.addDevice(device: device)
                 onScreen = false
             }, label: {

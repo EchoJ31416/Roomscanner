@@ -48,12 +48,21 @@ class Device{
     }
     private var supplier = supplyType.NA
     
-    init(location: simd_float3 = simd_make_float3(0, 0, 0), tag: Int = 0, onCeiling: Bool = false, size: Float = 0, type: category = category.Sensor){
+    init(location: simd_float3 = simd_make_float3(0, 0, 0), 
+         tag: Int = 0,
+         onCeiling: Bool = false,
+         size: Float = 0,
+         type: category = category.Sensor,
+         conditioner: conditioningType = conditioningType.NA,
+         supplier: supplyType = supplyType.NA)
+    {
         self.location = location
         self.tag = tag
         self.onCeiling = onCeiling
         self.size = size
         self.type = type
+        self.conditioner = conditioner
+        self.supplier = supplier
     }
     
     func getType() -> String{
