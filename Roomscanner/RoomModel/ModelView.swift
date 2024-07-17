@@ -27,11 +27,16 @@ struct ModelView: View {
         geometry = SCNSphere(radius: 0.04)
         geometry.firstMaterial?.diffuse.contents = UIColor.black
         for device in self.devices{
+            node = SCNNode()
             if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
                 geometry = SCNPlane(width: CGFloat(device.getLength()/100), height: CGFloat(device.getWidth()/100))
                 geometry.firstMaterial?.isDoubleSided = true
+                var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
+                directional.simdEulerAngles = device.getRotation()
+                node.addChildNode(directional)
             }
-            node = SCNNode(geometry: geometry)
+            node.geometry = geometry
+            //node = SCNNode(geometry: geometry)
             node.castsShadow = true
             node.simdPosition = device.getLocation()
             node.name = "Device: \(device.getTag())"

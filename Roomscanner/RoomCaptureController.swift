@@ -82,10 +82,10 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     func generateCSV() -> URL {
         var fileURL: URL!
         // heading of CSV file.
-        let heading = "Tag, X (m), Y (m), Z (m), Device Category, On Ceiling, Length (cm), Width (cm), Air Conditioner Type, Air Supply Type\n"
+        let heading = "Tag, X (m), Y (m), Z (m), Device Category, Air Flow Direction, On Ceiling, Length (cm), Width (cm), Air Conditioner Type, Air Supply Type\n"
         
         // file rows
-        let rows = deviceLocations.map { "\($0.getTag()),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.getType()),\($0.getOnCeiling()),\($0.getLength()),\($0.getWidth()),\($0.getConditionerType()),\($0.getSupplierType())" }
+        let rows = deviceLocations.map { "\($0.getTag()),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.getType()),\($0.getDirection()),\($0.getOnCeiling()),\($0.getLength()),\($0.getWidth()),\($0.getConditionerType()),\($0.getSupplierType())" }
         
         // rows to string data
         let stringData = heading + rows.joined(separator: "\n")
@@ -114,6 +114,12 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         let transform = currentFrame!.camera.transform
         let position = simd_make_float3(transform.columns.3)
         return position
+    }
+    
+    func getRotation() -> simd_float3 {
+        let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
+        let angles = currentFrame!.camera.eulerAngles
+        return angles
     }
     
     func addDevice(device: Device){

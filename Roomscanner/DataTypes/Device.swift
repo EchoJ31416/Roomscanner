@@ -11,6 +11,7 @@ import RoomPlan
 
 class Device{
     private var location: simd_float3
+    private var rotation: simd_float3
     private var tag: Int
     private var onCeiling: Bool
     private var length: Float
@@ -29,6 +30,19 @@ class Device{
         var id: Self { self }
     }
     private var type = category.Sensor
+    
+    enum directions: String, CaseIterable, Identifiable{
+        case Up
+        case Down
+        case Left
+        case Right
+        case Towards
+        case Away
+        case NA
+        
+        var id: Self { self }
+    }
+    private var direction = directions.NA
     
     enum conditioningType: String, CaseIterable, Identifiable{
         case window
@@ -50,20 +64,24 @@ class Device{
     private var supplier = supplyType.NA
     
     init(location: simd_float3 = simd_make_float3(0, 0, 0), 
+         rotation: simd_float3 = simd_make_float3(0, 0, 0),
          tag: Int = 0,
          onCeiling: Bool = false,
          length: Float = 0,
          width: Float = 0,
          type: category = category.Sensor,
+         direction: directions = directions.NA,
          conditioner: conditioningType = conditioningType.NA,
          supplier: supplyType = supplyType.NA)
     {
         self.location = location
+        self.rotation = rotation
         self.tag = tag
         self.onCeiling = onCeiling
         self.length = length
         self.width = width
         self.type = type
+        self.direction = direction
         self.conditioner = conditioner
         self.supplier = supplier
     }
@@ -108,6 +126,22 @@ class Device{
         }
     }
     
+    func getRawDirection() -> directions{
+        return direction
+    }
+    
+    func getDirection() -> String{
+        return self.directionConverter(direction: self.getRawDirection())
+    }
+    
+    func directionConverter(direction: Device.directions) -> String{
+        if (direction == .NA){
+            return "N/A"
+        } else {
+            return direction.rawValue
+        }
+    }
+    
     func getRawSupplier() -> supplyType{
         return supplier
     }
@@ -132,6 +166,14 @@ class Device{
     
     func setLocation(location: simd_float3){
         self.location = location
+    }
+    
+    func getRotation() -> simd_float3{
+        return self.rotation
+    }
+    
+    func setRotation(rotation: simd_float3){
+        self.rotation = rotation
     }
     
     func getTag() -> Int{

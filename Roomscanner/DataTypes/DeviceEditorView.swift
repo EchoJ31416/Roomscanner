@@ -18,6 +18,7 @@ struct DeviceEditorView: View {
     @State private var deviceLength: Float = 0.0
     @State private var deviceWidth: Float = 0.0
     @State private var selectedDevice: Device.category = .Sensor
+    @State private var selectedDirection: Device.directions = .NA
     @State private var conditioningType: Device.conditioningType = .NA
     @State private var supplyType: Device.supplyType = .NA
     
@@ -28,6 +29,11 @@ struct DeviceEditorView: View {
                 Picker("Device Type", selection: $selectedDevice) {
                     ForEach(Device.category.allCases) { device in
                         Text(self.device.categoryConverter(category: device)).tag(device)
+                    }
+                }
+                Picker("Air Flow Direction", selection: $selectedDirection) {
+                    ForEach(Device.directions.allCases) { direction in
+                        Text(self.device.directionConverter(direction: direction)).tag(direction)
                     }
                 }
                 HStack{
@@ -58,11 +64,13 @@ struct DeviceEditorView: View {
             }
             Button(action: {
                 device = Device(location: captureController.getLocation(), 
+                                rotation: captureController.getRotation(),
                                 tag: deviceTag,
                                 onCeiling: deviceOnCeiling,
                                 length: deviceLength,
                                 width: deviceWidth,
                                 type: selectedDevice,
+                                direction: selectedDirection,
                                 conditioner: conditioningType,
                                 supplier: supplyType)
                 captureController.addDevice(device: device)
