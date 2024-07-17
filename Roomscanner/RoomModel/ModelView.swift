@@ -23,9 +23,14 @@ struct ModelView: View {
         var node: SCNNode
         self.devices = devices
         viewModel.deviceList = self.devices
-        let geometry = SCNSphere(radius: 0.04)
+        var geometry = SCNGeometry()
+        geometry = SCNSphere(radius: 0.04)
         geometry.firstMaterial?.diffuse.contents = UIColor.black
         for device in self.devices{
+            if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
+                geometry = SCNPlane(width: CGFloat(device.getLength()/100), height: CGFloat(device.getWidth()/100))
+                geometry.firstMaterial?.isDoubleSided = true
+            }
             node = SCNNode(geometry: geometry)
             node.castsShadow = true
             node.simdPosition = device.getLocation()
