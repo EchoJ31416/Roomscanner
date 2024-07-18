@@ -172,6 +172,7 @@ struct ModelView: View {
     }
     
     func rotateX(initial: simd_float4x4, degrees: Float) -> simd_float4x4 {
+        var degrees = degrees/180 * Float.pi
         var initColumns: [simd_float3] = []
         initColumns.append(simd_make_float3(initial.columns.0))
         initColumns.append(simd_make_float3(initial.columns.1))
@@ -226,19 +227,25 @@ struct ModelView: View {
         if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
             geometry = SCNPlane(width: CGFloat(device.getLength()/100), height: CGFloat(device.getWidth()/100))
             geometry.firstMaterial?.isDoubleSided = true
+            node.simdTransform = parallel(inWall: node.simdTransform, paraWall: closestWall(device: device))
             switch device.getRawDirection() {
             case .Up:
-                node.simdTransform = setToFlat(initial: node.simdTransform)
+                //node.simdTransform = setToFlat(initial: node.simdTransform)
+                //node.simdTransform = parallel(inWall: node.simdTransform, paraWall: closestWall(device: device))
+                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Down:
-                node.simdTransform = setToFlat(initial: node.simdTransform)
+                //node.simdTransform = parallel(inWall: node.simdTransform, paraWall: closestWall(device: device))
+                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Left:
-                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 0)
+                node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
             case .Right:
-                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 0)
+                node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
             case .Towards:
-                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 0)
+                node.simdTransform = node.simdTransform
+                //node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
             case .Away:
-                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 0)
+                node.simdTransform = node.simdTransform
+                //node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
             case .NA:
                 node.simdTransform = node.simdTransform
             }
@@ -262,6 +269,33 @@ struct ModelView: View {
         node.geometry = geometry
         //node = SCNNode(geometry: geometry)
         return node
+    }
+    
+    func closestWall(device: Device) -> simd_float4x4{
+        var location = device.getLocation()
+        var minDistance: Float = -1
+        var minWall: simd_float4x4 = simd_float4x4()
+        for wall in self.wallTransforms {
+            var wallDistance = simd_distance(location, simd_make_float3(wall.columns.3))
+            if ((wallDistance < minDistance) || (minDistance == -1)) {
+                minDistance = wallDistance
+                minWall = wall
+            }
+        }
+        return minWall
+    }
+    
+    func parallel(inWall: simd_float4x4, paraWall: simd_float4x4) -> simd_float4x4{
+        var initColumns: [simd_float3] = []
+        initColumns.append(simd_make_float3(paraWall.columns.0))
+        initColumns.append(simd_make_float3(paraWall.columns.1))
+        initColumns.append(simd_make_float3(paraWall.columns.2))
+        var newColumns: [simd_float4] = []
+        newColumns.append(simd_make_float4(initColumns[0]))
+        newColumns.append(simd_make_float4(initColumns[1]))
+        newColumns.append(simd_make_float4(initColumns[2]))
+        newColumns.append(inWall.columns.3)
+        return simd_float4x4(newColumns)
     }
 }
 
