@@ -188,7 +188,18 @@ struct ModelView: View {
         return simd_float4x4(newColumns)
     }
     
+    func setToFlat(initial: simd_float4x4) -> simd_float4x4{
+        var flatMatrix = simd_float3x3(simd_make_float3(1, 0, 0), simd_make_float3(0, 0, -1), simd_make_float3(0, 1, 0))
+        var newColumns: [simd_float4] = []
+        newColumns.append(simd_make_float4(flatMatrix.columns.0))
+        newColumns.append(simd_make_float4(flatMatrix.columns.1))
+        newColumns.append(simd_make_float4(flatMatrix.columns.2))
+        newColumns.append(initial.columns.3)
+        return simd_float4x4(newColumns)
+    }
+    
     func rotateY(initial: simd_float4x4, degrees: Float) -> simd_float4x4 {
+        var degrees = degrees/180 * Float.pi
         var initColumns: [simd_float3] = []
         initColumns.append(simd_make_float3(initial.columns.0))
         initColumns.append(simd_make_float3(initial.columns.1))
@@ -206,24 +217,50 @@ struct ModelView: View {
     }
     
     func addDevice(device: Device) -> SCNNode {
-        var node: SCNNode
-        var geometry = SCNGeometry()
-        geometry = SCNSphere(radius: 0.04)
-        geometry.firstMaterial?.diffuse.contents = UIColor.black
-        node = SCNNode()
-        if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
-            geometry = SCNPlane(width: CGFloat(device.getLength()/100), height: CGFloat(device.getWidth()/100))
-            geometry.firstMaterial?.isDoubleSided = true
-            geometry.firstMaterial?.diffuse.contents = UIColor.darkGray
-            var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
-            directional.simdEulerAngles = device.getRotation()
-            node.addChildNode(directional)
-        }
-        node.geometry = geometry
-        //node = SCNNode(geometry: geometry)
+        var node: SCNNode = SCNNode()
         node.castsShadow = true
         node.simdPosition = device.getLocation()
         node.name = "Device: \(device.getTag())"
+        var geometry = SCNGeometry()
+        geometry = SCNSphere(radius: 0.04)
+        if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
+            geometry = SCNPlane(width: CGFloat(device.getLength()/100), height: CGFloat(device.getWidth()/100))
+            geometry.firstMaterial?.isDoubleSided = true
+            switch device.getRawDirection() {
+            case .Up:
+                node.simdTransform = setToFlat(initial: node.simdTransform)
+            case .Down:
+                node.simdTransform = setToFlat(initial: node.simdTransform)
+            case .Left:
+                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 0)
+            case .Right:
+                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 0)
+            case .Towards:
+                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 0)
+            case .Away:
+                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 0)
+            case .NA:
+                node.simdTransform = node.simdTransform
+            }
+            //var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
+            //directional.simdEulerAngles = device.getRotation()
+            //node.addChildNode(directional)
+        }
+        var color: UIColor
+        switch device.getRawType() {
+        case .Sensor: color = UIColor.black
+        case .AirConditioning: color = UIColor.blue
+        case .Heater: color = UIColor.green
+        case .Fan: color = UIColor.cyan
+        case .AirSupply: color = UIColor.red
+        case .AirReturn: color = UIColor.brown
+        case .AirExchange: color = UIColor.lightGray
+        case .DoorOpen: color = UIColor.orange
+        case .WindowOpen: color = UIColor.yellow
+        }
+        geometry.firstMaterial?.diffuse.contents = color
+        node.geometry = geometry
+        //node = SCNNode(geometry: geometry)
         return node
     }
 }
