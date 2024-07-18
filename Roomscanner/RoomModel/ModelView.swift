@@ -1,4 +1,6 @@
 import SwiftUI
+import Swift
+import RoomPlan
 import SceneKit
 import SceneKit.ModelIO
 
@@ -7,6 +9,7 @@ import SceneKit.ModelIO
 struct ModelView: View {
     @Environment(RoomCaptureController.self) private var captureController
     var devices: [Device] = []
+    var wallTransforms: [simd_float4x4] = []
     var scene = makeScene()
     var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
     var exportURL = FileManager.default.temporaryDirectory.appending(path: "room.usdz")
@@ -15,33 +18,48 @@ struct ModelView: View {
     @Environment(\.presentationMode) var presentationMode
     
     
-    init(devices: [Device]){
+    init(devices: [Device], wallTransforms: [simd_float4x4]){
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
         scene?.rootNode.addChildNode(assetNode)
-        var node: SCNNode
-        self.devices = devices
-        viewModel.deviceList = self.devices
-        var geometry = SCNGeometry()
-        geometry = SCNSphere(radius: 0.04)
-        geometry.firstMaterial?.diffuse.contents = UIColor.black
-        for device in self.devices{
-            node = SCNNode()
-            if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
-                geometry = SCNPlane(width: CGFloat(device.getLength()/100), height: CGFloat(device.getWidth()/100))
-                geometry.firstMaterial?.isDoubleSided = true
-                var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
-                directional.simdEulerAngles = device.getRotation()
-                node.addChildNode(directional)
-            }
-            node.geometry = geometry
-            //node = SCNNode(geometry: geometry)
-            node.castsShadow = true
-            node.simdPosition = device.getLocation()
-            node.name = "Device: \(device.getTag())"
-            scene?.rootNode.addChildNode(node)
+        
+        self.wallTransforms = wallTransforms
+        var wallNode: SCNNode
+        var wallGeometry = SCNPyramid(width: 0.125, height: 0.3, length: 0.0625)
+        wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
+        for wall in wallTransforms{
+            wallNode = SCNNode(geometry: wallGeometry)
+            wallNode.simdTransform = rotateX(initial: wall, degrees: Float(Double.pi)/2)
+            wallNode.castsShadow = true
+            scene?.rootNode.addChildNode(wallNode)
         }
+        
+        self.devices = devices
+        for device in self.devices{
+            scene?.rootNode.addChildNode(addDevice(device: device))
+        }
+//        viewModel.deviceList = self.devices
+//        var geometry = SCNGeometry()
+//        geometry = SCNSphere(radius: 0.04)
+//        geometry.firstMaterial?.diffuse.contents = UIColor.black
+//        for device in self.devices{
+//            node = SCNNode()
+//            if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
+//                geometry = SCNPlane(width: CGFloat(device.getLength()/100), height: CGFloat(device.getWidth()/100))
+//                geometry.firstMaterial?.isDoubleSided = true
+//                geometry.firstMaterial?.diffuse.contents = UIColor.darkGray
+//                var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
+//                directional.simdEulerAngles = device.getRotation()
+//                node.addChildNode(directional)
+//            }
+//            node.geometry = geometry
+//            //node = SCNNode(geometry: geometry)
+//            node.castsShadow = true
+//            node.simdPosition = device.getLocation()
+//            node.name = "Device: \(device.getTag())"
+//            scene?.rootNode.addChildNode(node)
+//        }
     }
   
     static func makeScene() -> SCNScene? {
@@ -68,6 +86,7 @@ struct ModelView: View {
             }.opacity(1))
             VStack {
                 HStack{
+                    Text("\(acos(wallTransforms[0].columns.0[0]))")
                     Button(action: {
                         self.export()
                     }, label: {
@@ -151,10 +170,66 @@ struct ModelView: View {
         
         showShareSheet = true
     }
-}
-
-struct ModelView_Previews: PreviewProvider {
-    static var previews: some View {
-        ModelView(devices: [Device(location: simd_float3(0.0, 1.0, 0.0))])
+    
+    func rotateX(initial: simd_float4x4, degrees: Float) -> simd_float4x4 {
+        var initColumns: [simd_float3] = []
+        initColumns.append(simd_make_float3(initial.columns.0))
+        initColumns.append(simd_make_float3(initial.columns.1))
+        initColumns.append(simd_make_float3(initial.columns.2))
+        var smallMatrix = simd_float3x3(initColumns)
+        var rotateMatrix = simd_float3x3(simd_make_float3(1, 0, 0), simd_make_float3(0, cos(degrees), -sin(degrees)), simd_make_float3(0, sin(degrees), cos(degrees)))
+        //var inverseMatrix = smallMatrix.inverse
+        var normalMatrix = smallMatrix*rotateMatrix//inverseMatrix.transpose
+        var newColumns: [simd_float4] = []
+        newColumns.append(simd_make_float4(normalMatrix.columns.0))
+        newColumns.append(simd_make_float4(normalMatrix.columns.1))
+        newColumns.append(simd_make_float4(normalMatrix.columns.2))
+        newColumns.append(initial.columns.3)
+        return simd_float4x4(newColumns)
+    }
+    
+    func rotateY(initial: simd_float4x4, degrees: Float) -> simd_float4x4 {
+        var initColumns: [simd_float3] = []
+        initColumns.append(simd_make_float3(initial.columns.0))
+        initColumns.append(simd_make_float3(initial.columns.1))
+        initColumns.append(simd_make_float3(initial.columns.2))
+        var smallMatrix = simd_float3x3(initColumns)
+        var rotateMatrix = simd_float3x3(simd_make_float3(cos(degrees), 0, sin(degrees)), simd_make_float3(0, 1, 0), simd_make_float3(-sin(degrees), 0, cos(degrees)))
+        //var inverseMatrix = smallMatrix.inverse
+        var normalMatrix = smallMatrix*rotateMatrix//inverseMatrix.transpose
+        var newColumns: [simd_float4] = []
+        newColumns.append(simd_make_float4(normalMatrix.columns.0))
+        newColumns.append(simd_make_float4(normalMatrix.columns.1))
+        newColumns.append(simd_make_float4(normalMatrix.columns.2))
+        newColumns.append(initial.columns.3)
+        return simd_float4x4(newColumns)
+    }
+    
+    func addDevice(device: Device) -> SCNNode {
+        var node: SCNNode
+        var geometry = SCNGeometry()
+        geometry = SCNSphere(radius: 0.04)
+        geometry.firstMaterial?.diffuse.contents = UIColor.black
+        node = SCNNode()
+        if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
+            geometry = SCNPlane(width: CGFloat(device.getLength()/100), height: CGFloat(device.getWidth()/100))
+            geometry.firstMaterial?.isDoubleSided = true
+            geometry.firstMaterial?.diffuse.contents = UIColor.darkGray
+            var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
+            directional.simdEulerAngles = device.getRotation()
+            node.addChildNode(directional)
+        }
+        node.geometry = geometry
+        //node = SCNNode(geometry: geometry)
+        node.castsShadow = true
+        node.simdPosition = device.getLocation()
+        node.name = "Device: \(device.getTag())"
+        return node
     }
 }
+
+//struct ModelView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ModelView(devices: [Device(location: simd_float3(0.0, 1.0, 0.0))])
+//    }
+//}

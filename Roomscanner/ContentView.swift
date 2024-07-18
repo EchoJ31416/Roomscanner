@@ -59,7 +59,7 @@ struct ScanningView: View {
                     captureController.startSession()
                 }
             HStack{
-                NavigationLink(destination: ModelView(devices: captureController.deviceLocations), label: {Text("Show 3D Model")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
+                NavigationLink(destination: ModelView(devices: captureController.deviceLocations, wallTransforms: captureController.wallTransforms), label: {Text("Show 3D Model")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
                     .opacity((captureController.finalResult != nil) ? 1 : 0)
                     .padding(.leading)
                 Spacer()

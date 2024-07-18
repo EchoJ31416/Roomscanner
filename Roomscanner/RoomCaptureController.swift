@@ -23,6 +23,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     var sessionConfig: RoomCaptureSession.Configuration
     var finalResult: CapturedRoom?
     var deviceID: Int = 0
+    var wallTransforms: [simd_float4x4] = []
     
     var deviceLocations: [Device] = []
   
@@ -59,6 +60,10 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
   
     func captureView(didPresent processedResult: CapturedRoom, error: Error?) {
         finalResult = processedResult
+        var walls = finalResult!.walls
+        for wall in walls{
+            self.wallTransforms.append(wall.transform)
+        }
         let maxHeight = self.highestPoint()
         for device in self.deviceLocations {
             if device.getOnCeiling() {
