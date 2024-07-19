@@ -14,8 +14,8 @@ class Device{
     private var rotation: simd_float3
     private var tag: Int
     private var onCeiling: Bool
-    private var length: Float
     private var width: Float
+    private var height: Float
     enum category: String, CaseIterable, Identifiable{
         case Sensor
         case AirConditioning
@@ -67,8 +67,8 @@ class Device{
          rotation: simd_float3 = simd_make_float3(0, 0, 0),
          tag: Int = 0,
          onCeiling: Bool = false,
-         length: Float = 0,
          width: Float = 0,
+         height: Float = 0,
          type: category = category.Sensor,
          direction: directions = directions.NA,
          conditioner: conditioningType = conditioningType.NA,
@@ -78,8 +78,8 @@ class Device{
         self.rotation = rotation
         self.tag = tag
         self.onCeiling = onCeiling
-        self.length = length
         self.width = width
+        self.height = height
         self.type = type
         self.direction = direction
         self.conditioner = conditioner
@@ -192,20 +192,20 @@ class Device{
         self.onCeiling = onCeiling
     }
     
-    func getLength() -> Float{
-        return self.length
-    }
-    
-    func setLength(length: Float){
-        self.length = length
-    }
-    
     func getWidth() -> Float{
         return self.width
     }
     
     func setWidth(width: Float){
         self.width = width
+    }
+    
+    func getHeight() -> Float{
+        return self.height
+    }
+    
+    func setHeight(height: Float){
+        self.height = height
     }
 }
 

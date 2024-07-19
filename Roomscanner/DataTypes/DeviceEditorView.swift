@@ -15,8 +15,8 @@ struct DeviceEditorView: View {
     @State private var location: simd_float3? = nil
     @State private var deviceTag: Int = -1
     @State private var deviceOnCeiling: Bool = false
-    @State private var deviceLength: Float = 0.0
     @State private var deviceWidth: Float = 0.0
+    @State private var deviceHeight: Float = 0.0
     @State private var selectedDevice: Device.category = .Sensor
     @State private var selectedDirection: Device.directions = .NA
     @State private var conditioningType: Device.conditioningType = .NA
@@ -41,12 +41,12 @@ struct DeviceEditorView: View {
                     TextField("Device Tag", value: $deviceTag, format: IntegerFormatStyle())
                 }
                 HStack{
-                    Text("Device Length (cm): ")
-                    TextField("Device Length", value: $deviceLength, format: FloatingPointFormatStyle())
-                }.opacity(selectedDevice != .Sensor ? 1 : 0)
-                HStack{
                     Text("Device Width (cm): ")
                     TextField("Device Width", value: $deviceWidth, format: FloatingPointFormatStyle())
+                }.opacity(selectedDevice != .Sensor ? 1 : 0)
+                HStack{
+                    Text("Device Height/Depth (cm): ")
+                    TextField("Device Height/Depth", value: $deviceHeight, format: FloatingPointFormatStyle())
                 }.opacity(selectedDevice != .Sensor ? 1 : 0)
                 Picker("Air Conditioner Type", selection: $conditioningType) {
                     ForEach(Device.conditioningType.allCases) { conditioner in
@@ -67,8 +67,8 @@ struct DeviceEditorView: View {
                                 rotation: captureController.getRotation(),
                                 tag: deviceTag,
                                 onCeiling: deviceOnCeiling,
-                                length: deviceLength,
                                 width: deviceWidth,
+                                height: deviceHeight,
                                 type: selectedDevice,
                                 direction: selectedDirection,
                                 conditioner: conditioningType,
