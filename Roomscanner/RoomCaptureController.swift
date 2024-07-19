@@ -121,10 +121,10 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         return position
     }
     
-    func getRotation() -> simd_float3 {
+    func getTransform() -> simd_float4x4 {
         let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
-        let angles = currentFrame!.camera.eulerAngles
-        return angles
+        let transform = currentFrame!.camera.transform
+        return transform
     }
     
     func addDevice(device: Device){

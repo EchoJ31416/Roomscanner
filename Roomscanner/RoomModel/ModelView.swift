@@ -39,27 +39,6 @@ struct ModelView: View {
         for device in self.devices{
             scene?.rootNode.addChildNode(addDevice(device: device))
         }
-//        viewModel.deviceList = self.devices
-//        var geometry = SCNGeometry()
-//        geometry = SCNSphere(radius: 0.04)
-//        geometry.firstMaterial?.diffuse.contents = UIColor.black
-//        for device in self.devices{
-//            node = SCNNode()
-//            if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
-//                geometry = SCNPlane(width: CGFloat(device.getLength()/100), height: CGFloat(device.getWidth()/100))
-//                geometry.firstMaterial?.isDoubleSided = true
-//                geometry.firstMaterial?.diffuse.contents = UIColor.darkGray
-//                var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
-//                directional.simdEulerAngles = device.getRotation()
-//                node.addChildNode(directional)
-//            }
-//            node.geometry = geometry
-//            //node = SCNNode(geometry: geometry)
-//            node.castsShadow = true
-//            node.simdPosition = device.getLocation()
-//            node.name = "Device: \(device.getTag())"
-//            scene?.rootNode.addChildNode(node)
-//        }
     }
   
     static func makeScene() -> SCNScene? {
@@ -227,14 +206,11 @@ struct ModelView: View {
         if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
             geometry = SCNPlane(width: CGFloat(device.getWidth()/100), height: CGFloat(device.getHeight()/100))
             geometry.firstMaterial?.isDoubleSided = true
-            node.simdTransform = parallel(inWall: node.simdTransform, paraWall: self.wallTransforms[0])//closestWall(device: device))
+            node.simdTransform = parallel(inWall: node.simdTransform, paraWall: self.wallTransforms[0])
             switch device.getRawDirection() {
             case .Up:
-                //node.simdTransform = setToFlat(initial: node.simdTransform)
-                //node.simdTransform = parallel(inWall: node.simdTransform, paraWall: closestWall(device: device))
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Down:
-                //node.simdTransform = parallel(inWall: node.simdTransform, paraWall: closestWall(device: device))
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Left:
                 node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)

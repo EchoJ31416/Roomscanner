@@ -10,8 +10,7 @@ import RealityKit
 import RoomPlan
 
 class Device{
-    private var location: simd_float3
-    private var rotation: simd_float3
+    private var transform: simd_float4x4
     private var tag: Int
     private var onCeiling: Bool
     private var width: Float
@@ -63,8 +62,8 @@ class Device{
     }
     private var supplier = supplyType.NA
     
-    init(location: simd_float3 = simd_make_float3(0, 0, 0), 
-         rotation: simd_float3 = simd_make_float3(0, 0, 0),
+    init(
+         transform: simd_float4x4 = simd_float4x4(0),
          tag: Int = 0,
          onCeiling: Bool = false,
          width: Float = 0,
@@ -74,8 +73,7 @@ class Device{
          conditioner: conditioningType = conditioningType.NA,
          supplier: supplyType = supplyType.NA)
     {
-        self.location = location
-        self.rotation = rotation
+        self.transform = transform
         self.tag = tag
         self.onCeiling = onCeiling
         self.width = width
@@ -161,19 +159,20 @@ class Device{
     }
     
     func getLocation() -> simd_float3{
-        return self.location
+        return simd_make_float3(self.transform.columns.3)
     }
     
     func setLocation(location: simd_float3){
-        self.location = location
+        self.transform.columns.3 = simd_make_float4(location)
+        self.transform.columns.3[3] = 1
     }
     
-    func getRotation() -> simd_float3{
-        return self.rotation
+    func getTransform() -> simd_float4x4{
+        return self.transform
     }
     
-    func setRotation(rotation: simd_float3){
-        self.rotation = rotation
+    func setTransform(transform: simd_float4x4){
+        self.transform = transform
     }
     
     func getTag() -> Int{

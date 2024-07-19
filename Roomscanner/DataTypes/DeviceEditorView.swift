@@ -12,7 +12,6 @@ struct DeviceEditorView: View {
     @Binding var onScreen: Bool
     @Environment(RoomCaptureController.self) private var captureController
     @State private var device = Device()
-    @State private var location: simd_float3? = nil
     @State private var deviceTag: Int = -1
     @State private var deviceOnCeiling: Bool = false
     @State private var deviceWidth: Float = 0.0
@@ -63,8 +62,8 @@ struct DeviceEditorView: View {
                 }
             }
             Button(action: {
-                device = Device(location: captureController.getLocation(), 
-                                rotation: captureController.getRotation(),
+                device = Device(
+                                transform: captureController.getTransform(),
                                 tag: deviceTag,
                                 onCeiling: deviceOnCeiling,
                                 width: deviceWidth,
