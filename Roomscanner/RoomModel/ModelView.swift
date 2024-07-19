@@ -19,6 +19,7 @@ struct ModelView: View {
     
     
     init(devices: [Device], wallTransforms: [simd_float4x4]){
+        viewModel.deviceList = devices
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
@@ -28,7 +29,14 @@ struct ModelView: View {
         var wallNode: SCNNode
         var wallGeometry = SCNPyramid(width: 0.125, height: 0.3, length: 0.0625)
         wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
+        var counter = 0
         for wall in wallTransforms{
+            if counter == 0{
+                wallGeometry.firstMaterial?.diffuse.contents = UIColor.black
+                counter += 1
+            } else {
+                wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
+            }
             wallNode = SCNNode(geometry: wallGeometry)
             wallNode.simdTransform = rotateX(initial: wall, degrees: Float(Double.pi)/2)
             wallNode.castsShadow = true
@@ -65,7 +73,8 @@ struct ModelView: View {
             }.opacity(1))
             VStack {
                 HStack{
-                    Text("\(acos(wallTransforms[0].columns.0[0]))")
+                    Text("\(devices[0].getYAngle()), \(getWallYAngle()), \(devices[0].getYAngle() - getWallYAngle())")
+                        .padding()
                     Button(action: {
                         self.export()
                     }, label: {
@@ -213,15 +222,27 @@ struct ModelView: View {
             case .Down:
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Left:
-                node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
+                } else {
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                }
             case .Right:
-                node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
+                } else {
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                }
             case .Towards:
-                node.simdTransform = node.simdTransform
-                //node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                //node.simdTransform = node.simdTransform
+                if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                }
             case .Away:
-                node.simdTransform = node.simdTransform
-                //node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                //node.simdTransform = node.simdTransform
+                if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                }
             case .NA:
                 node.simdTransform = node.simdTransform
             }
@@ -272,6 +293,10 @@ struct ModelView: View {
         newColumns.append(simd_make_float4(initColumns[2]))
         newColumns.append(inWall.columns.3)
         return simd_float4x4(newColumns)
+    }
+    
+    func getWallYAngle() -> Float {
+        return 180*(asin(self.wallTransforms[0].columns.0[2])/Float.pi)
     }
 }
 
