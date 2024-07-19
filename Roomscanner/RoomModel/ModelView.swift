@@ -227,7 +227,7 @@ struct ModelView: View {
         if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
             geometry = SCNPlane(width: CGFloat(device.getWidth()/100), height: CGFloat(device.getHeight()/100))
             geometry.firstMaterial?.isDoubleSided = true
-            node.simdTransform = parallel(inWall: node.simdTransform, paraWall: closestWall(device: device))
+            node.simdTransform = parallel(inWall: node.simdTransform, paraWall: self.wallTransforms[0])//closestWall(device: device))
             switch device.getRawDirection() {
             case .Up:
                 //node.simdTransform = setToFlat(initial: node.simdTransform)
