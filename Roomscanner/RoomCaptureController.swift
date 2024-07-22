@@ -149,8 +149,8 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         let walls = finalResult?.walls ?? []
         var maxHeight: Float = 0
         for wall in walls {
-            if wall.dimensions.y > maxHeight{
-                maxHeight = wall.dimensions.y
+            if (wall.dimensions.y/2+wall.transform.columns.3[1]) > maxHeight{
+                maxHeight = wall.dimensions.y/2+wall.transform.columns.3[1]
             }
         }
         return maxHeight
