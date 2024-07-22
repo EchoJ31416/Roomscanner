@@ -160,7 +160,7 @@ class Device{
         switch supplier{
         case .sameRoom: return "Same room recirculation"
         case .sharedAir: return "Shared recirculated air"
-        case .mixedAir: return "Mix of recirculated andd fresh air"
+        case .mixedAir: return "Mix of recirculated and fresh air"
         case .freshAir: return "Fresh Air"
         case .NA: return "N/A"
         default: return "Unknown Air Supplier"
