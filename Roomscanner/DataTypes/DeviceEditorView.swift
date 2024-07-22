@@ -30,23 +30,23 @@ struct DeviceEditorView: View {
                         Text(self.device.categoryConverter(category: device)).tag(device)
                     }
                 }
-                Picker("Air Flow Direction", selection: $selectedDirection) {
-                    ForEach(Device.directions.allCases) { direction in
-                        Text(self.device.directionConverter(direction: direction)).tag(direction)
-                    }
-                }
                 HStack{
                     Text("Device Tag: Integer Only")
                     TextField("Device Tag", value: $deviceTag, format: IntegerFormatStyle())
                 }
+                Picker("Air Flow Direction", selection: $selectedDirection) {
+                    ForEach(Device.directions.allCases) { direction in
+                        Text(self.device.directionConverter(direction: direction)).tag(direction)
+                    }
+                }.opacity((selectedDevice != .Sensor) && (selectedDevice != .Heater) ? 1 : 0)
                 HStack{
                     Text("Device Width (cm): ")
                     TextField("Device Width", value: $deviceWidth, format: FloatingPointFormatStyle())
-                }.opacity(selectedDevice != .Sensor ? 1 : 0)
+                }.opacity((selectedDevice != .Sensor) && (selectedDevice != .Heater) ? 1 : 0)
                 HStack{
                     Text("Device Height/Depth (cm): ")
                     TextField("Device Height/Depth", value: $deviceHeight, format: FloatingPointFormatStyle())
-                }.opacity(selectedDevice != .Sensor ? 1 : 0)
+                }.opacity((selectedDevice != .Sensor) && (selectedDevice != .Heater) ? 1 : 0)
                 Picker("Air Conditioner Type", selection: $conditioningType) {
                     ForEach(Device.conditioningType.allCases) { conditioner in
                         Text(self.device.conditionerConverter(conditioner: conditioner)).tag(conditioner)
