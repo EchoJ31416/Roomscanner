@@ -28,19 +28,23 @@ struct ModelView: View {
         self.wallTransforms = wallTransforms
         var wallNode: SCNNode
         var wallGeometry = SCNPyramid(width: 0.125, height: 0.3, length: 0.0625)
-        wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
+        //wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
         var counter = 0
         for wall in wallTransforms{
             if counter == 0{
                 wallGeometry.firstMaterial?.diffuse.contents = UIColor.black
                 counter += 1
-            } else {
-                wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
+                //            } else if counter == 1{
+                //                wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
+                //                counter += 1
+                //            } else {
+                //                wallGeometry.firstMaterial?.diffuse.contents = UIColor.blue
+                //            }
+                wallNode = SCNNode(geometry: wallGeometry)
+                wallNode.simdTransform = rotateX(initial: wall, degrees: Float(Double.pi)/2)
+                wallNode.castsShadow = true
+                scene?.rootNode.addChildNode(wallNode)
             }
-            wallNode = SCNNode(geometry: wallGeometry)
-            wallNode.simdTransform = rotateX(initial: wall, degrees: Float(Double.pi)/2)
-            wallNode.castsShadow = true
-            scene?.rootNode.addChildNode(wallNode)
         }
         
         self.devices = devices
@@ -50,6 +54,7 @@ struct ModelView: View {
     }
   
     static func makeScene() -> SCNScene? {
+        
         let scene = SCNScene(named: "RoomPlan Scene.scn")
         return scene
     }
@@ -73,8 +78,11 @@ struct ModelView: View {
             }.opacity(1))
             VStack {
                 HStack{
-                    Text("\(devices[0].getYAngle()), \(getWallYAngle()), \(devices[0].getYAngle() - getWallYAngle())")
-                        .padding()
+                    if devices.count != 0 {
+                        Text("\(devices[0].getYAngle()), \(getWallYAngle()), \(devices[0].getYAngle() - getWallYAngle())")
+                            .padding()
+                    }
+                        
                     Button(action: {
                         self.export()
                     }, label: {
@@ -101,12 +109,14 @@ struct ModelView: View {
                 Spacer()
                 
                 HStack {
-                    HStack {
-                        Button(action: viewModel.selectPreviousDevice) {
-                            Image(systemName: "arrow.backward.circle.fill")
-                        }
-                        Button(action: viewModel.selectNextDevice) {
-                            Image(systemName: "arrow.forward.circle.fill")
+                    if devices.count != 0{
+                        HStack {
+                            Button(action: viewModel.selectPreviousDevice) {
+                                Image(systemName: "arrow.backward.circle.fill")
+                            }
+                            Button(action: viewModel.selectNextDevice) {
+                                Image(systemName: "arrow.forward.circle.fill")
+                            }
                         }
                     }
                     if let device = viewModel.selectedDevice {
@@ -125,6 +135,8 @@ struct ModelView: View {
                                 Image(systemName: "xmark.circle.fill")
                             }
                         }
+                    } else {
+                        Text("No device selected")
                     }
                 }
                     .padding(8)

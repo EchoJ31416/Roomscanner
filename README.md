@@ -12,4 +12,4 @@ Steps:
 7. Export device locations and information with the CSV export button
 
 
-Big thanks to deurell (https://github.com/deurell) for providing the initial Roomscanner code that this was all build on.
+Big thanks to deurell (https://github.com/deurell) for providing the initial Roomscanner code that this was all built on.
