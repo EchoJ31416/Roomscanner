@@ -15,6 +15,7 @@ class Device{
     private var onCeiling: Bool
     private var width: Float
     private var height: Float
+    private var airSource: String
     enum category: String, CaseIterable, Identifiable{
         case Sensor
         case AirConditioning
@@ -53,9 +54,10 @@ class Device{
     private var conditioner = conditioningType.NA
     
     enum supplyType: String, CaseIterable, Identifiable{
-        case freshAirDuct
-        case exhaustAirDuct
-        case supplyAirDuct
+        case sameRoom
+        case sharedAir
+        case mixedAir
+        case freshAir
         case NA
         
         var id: Self { self }
@@ -66,6 +68,7 @@ class Device{
          transform: simd_float4x4 = simd_float4x4(0),
          tag: Int = 0,
          onCeiling: Bool = false,
+         airSource: String = "",
          width: Float = 0,
          height: Float = 0,
          type: category = category.Sensor,
@@ -76,6 +79,7 @@ class Device{
         self.transform = transform
         self.tag = tag
         self.onCeiling = onCeiling
+        self.airSource = airSource
         self.width = width
         self.height = height
         self.type = type
@@ -105,6 +109,10 @@ class Device{
         case .WindowOpen: return "Open window"
         default: return "Unknown Device"
         }
+    }
+    
+    func getAirSource() -> String{
+        return airSource
     }
     
     func getRawConditioner() -> conditioningType{
@@ -150,9 +158,10 @@ class Device{
     
     func supplierConverter(supplier: Device.supplyType) -> String{
         switch supplier{
-        case .freshAirDuct: return "Fresh Air Duct"
-        case .exhaustAirDuct: return "Exhaust Air Duct"
-        case .supplyAirDuct: return "Supply Air Duct"
+        case .sameRoom: return "Same room recirculation"
+        case .sharedAir: return "Shared recirculated air"
+        case .mixedAir: return "Mix of recirculated andd fresh air"
+        case .freshAir: return "Fresh Air"
         case .NA: return "N/A"
         default: return "Unknown Air Supplier"
         }

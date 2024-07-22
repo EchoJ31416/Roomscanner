@@ -16,6 +16,7 @@ struct DeviceEditorView: View {
     @State private var deviceOnCeiling: Bool = false
     @State private var deviceWidth: Float = 0.0
     @State private var deviceHeight: Float = 0.0
+    @State private var airSource: String = ""
     @State private var selectedDevice: Device.category = .Sensor
     @State private var selectedDirection: Device.directions = .NA
     @State private var conditioningType: Device.conditioningType = .NA
@@ -47,6 +48,10 @@ struct DeviceEditorView: View {
                     Text("Device Height/Depth (cm): ")
                     TextField("Device Height/Depth", value: $deviceHeight, format: FloatingPointFormatStyle())
                 }.opacity((selectedDevice != .Sensor) && (selectedDevice != .Heater) ? 1 : 0)
+                HStack{
+                    Text("Air Exchange Input:")
+                    TextField("Air Exchange Input", text: $airSource)
+                }.opacity(selectedDevice == .AirExchange ? 1 : 0)
                 Picker("Air Conditioner Type", selection: $conditioningType) {
                     ForEach(Device.conditioningType.allCases) { conditioner in
                         Text(self.device.conditionerConverter(conditioner: conditioner)).tag(conditioner)
@@ -66,6 +71,7 @@ struct DeviceEditorView: View {
                                 transform: captureController.getTransform(),
                                 tag: deviceTag,
                                 onCeiling: deviceOnCeiling,
+                                airSource: airSource,
                                 width: deviceWidth,
                                 height: deviceHeight,
                                 type: selectedDevice,
