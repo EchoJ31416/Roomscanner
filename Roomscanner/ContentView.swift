@@ -49,6 +49,8 @@ struct ScanningView: View {
                 .navigationBarBackButtonHidden(true)
                 .navigationBarItems(leading: Button("Cancel") {
                     captureController.stopSession()
+                    captureController.clearDevices()
+                    captureController.clearResults()
                     presentationMode.wrappedValue.dismiss()
                 })
                 .navigationBarItems(trailing: Button("Done") {
@@ -78,6 +80,10 @@ struct ScanningView: View {
                         DeviceEditorView(onScreen: $showingDeviceManager)
                     })
                 Spacer()
+                Text("\(String(describing: captureController.roomCaptureView.captureSession.arSession))")
+                    .padding()
+                    .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 4))
+                    .padding()
                 /*Text(String(format: "%.2f", current_coords[0])+", "+String(format: "%.2f", current_coords[1])+", "+String(format: "%.2f", current_coords[2]))
                     .padding()
                     .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 4))

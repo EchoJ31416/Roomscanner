@@ -30,13 +30,17 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     init() {
         //let arConfig = ARWorldTrackingConfiguration()
         //arConfig.worldAlignment = .gravityAndHeading
-        //arSession = ARSession()
+        
         //arSession.configuration = arConfig
         //arSession.run(arConfig)
         roomCaptureView = RoomCaptureView(frame: CGRect(x: 0, y: 0, width: 42, height: 42))//, arSession: arSession)
         sessionConfig = RoomCaptureSession.Configuration()
+        let arConfig = ARWorldTrackingConfiguration()
+        arConfig.worldAlignment = .gravityAndHeading
+        roomCaptureView.captureSession.arSession.run(arConfig)
         roomCaptureView.captureSession.delegate = self
         roomCaptureView.delegate = self
+        
     }
   
     func startSession() {

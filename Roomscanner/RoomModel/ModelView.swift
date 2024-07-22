@@ -26,25 +26,16 @@ struct ModelView: View {
         scene?.rootNode.addChildNode(assetNode)
         
         self.wallTransforms = wallTransforms
-        var wallNode: SCNNode
-        var wallGeometry = SCNPyramid(width: 0.125, height: 0.3, length: 0.0625)
+        
         //wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
-        var counter = 0
-        for wall in wallTransforms{
-            if counter == 0{
-                wallGeometry.firstMaterial?.diffuse.contents = UIColor.black
-                counter += 1
-                //            } else if counter == 1{
-                //                wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
-                //                counter += 1
-                //            } else {
-                //                wallGeometry.firstMaterial?.diffuse.contents = UIColor.blue
-                //            }
-                wallNode = SCNNode(geometry: wallGeometry)
-                wallNode.simdTransform = rotateX(initial: wall, degrees: Float(Double.pi)/2)
-                wallNode.castsShadow = true
-                scene?.rootNode.addChildNode(wallNode)
-            }
+        if wallTransforms.count != 0 {
+            var wallNode: SCNNode
+            var wallGeometry = SCNPyramid(width: 0.125, height: 0.3, length: 0.0625)
+            wallGeometry.firstMaterial?.diffuse.contents = UIColor.black
+            wallNode = SCNNode(geometry: wallGeometry)
+            wallNode.simdTransform = rotateX(initial: wallTransforms[0], degrees: Float(Double.pi)/2)
+            wallNode.castsShadow = true
+            scene?.rootNode.addChildNode(wallNode)
         }
         
         self.devices = devices
@@ -73,8 +64,10 @@ struct ModelView: View {
             .navigationBarItems(trailing: Button("Done") {
                 captureController.clearDevices()
                 captureController.clearResults()
-                captureController.stopSession()
+                //captureController.stopSession()
                 presentationMode.wrappedValue.dismiss()
+                //wallNode.removeFromParentNode()
+                //scene?.rootNode.remove c
             }.opacity(1))
             VStack {
                 HStack{
