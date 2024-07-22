@@ -64,6 +64,39 @@ class Device{
     }
     private var supplier = supplyType.NA
     
+    enum windowType: String, CaseIterable, Identifiable{
+        case leftHung
+        case rightHung
+        case topHung
+        case bottomHung
+        case sliding
+        case NA
+        
+        var id: Self { self }
+    }
+    private var window = windowType.NA
+    
+    enum doorType: String, CaseIterable, Identifiable{
+        case sliding
+        case swing
+        case NA
+        
+        var id: Self { self }
+    }
+    private var door = doorType.NA
+    
+    enum openCondition: String, CaseIterable, Identifiable{
+        case closed
+        case slight
+        case half
+        case open
+        case mostly
+        case NA
+        
+        var id: Self { self }
+    }
+    private var open = openCondition.NA
+    
     init(
          transform: simd_float4x4 = simd_float4x4(0),
          tag: Int = 0,
@@ -74,7 +107,10 @@ class Device{
          type: category = category.Sensor,
          direction: directions = directions.NA,
          conditioner: conditioningType = conditioningType.NA,
-         supplier: supplyType = supplyType.NA)
+         supplier: supplyType = supplyType.NA,
+         window: windowType = windowType.NA,
+         door: doorType = doorType.NA,
+         open: openCondition = openCondition.NA)
     {
         self.transform = transform
         self.tag = tag
@@ -86,6 +122,9 @@ class Device{
         self.direction = direction
         self.conditioner = conditioner
         self.supplier = supplier
+        self.window = window
+        self.door = door
+        self.open = open
     }
     
     func getRawType() -> category{
@@ -164,6 +203,63 @@ class Device{
         case .freshAir: return "Fresh Air"
         case .NA: return "N/A"
         default: return "Unknown Air Supplier"
+        }
+    }
+    
+    func getRawWindow() -> windowType{
+        return window
+    }
+    
+    func getWindowType() -> String{
+        return self.windowConverter(window: self.getRawWindow())
+    }
+    
+    func windowConverter(window: Device.windowType) -> String{
+        switch window{
+        case .topHung: return "Window hung from the top"
+        case .bottomHung: return "Window hung from the bottom"
+        case .leftHung: return "Window hung from the left"
+        case .rightHung: return "Window hung from the right"
+        case .sliding: return "Sliding Window"
+        case .NA: return "N/A"
+        default: return "Unknown Window Type"
+        }
+    }
+    
+    func getRawDoor() -> doorType{
+        return door
+    }
+    
+    func getDoorType() -> String{
+        return self.doorConverter(door: self.getRawDoor())
+    }
+    
+    func doorConverter(door: Device.doorType) -> String{
+        switch door{
+        case .swing: return "Swinging Door"
+        case .sliding: return "Sliding Door"
+        case .NA: return "N/A"
+        default: return "Unknown Door Type"
+        }
+    }
+    
+    func getRawOpen() -> openCondition{
+        return open
+    }
+    
+    func getOpenType() -> String{
+        return self.openConverter(open: self.getRawOpen())
+    }
+    
+    func openConverter(open: Device.openCondition) -> String{
+        switch open{
+        case .closed: return "Closed"
+        case .slight: return "Slightly Open"
+        case .half: return "Half Open"
+        case .open: return "Open"
+        case .mostly: return "Mostly Open"
+        case .NA: return "N/A"
+        default: return "Unknown"
         }
     }
     

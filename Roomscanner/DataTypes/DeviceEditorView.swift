@@ -21,6 +21,9 @@ struct DeviceEditorView: View {
     @State private var selectedDirection: Device.directions = .NA
     @State private var conditioningType: Device.conditioningType = .NA
     @State private var supplyType: Device.supplyType = .NA
+    @State private var doorType: Device.doorType = .NA
+    @State private var windowType: Device.windowType = .NA
+    @State private var openCondition: Device.openCondition = .NA
     
     var body: some View {
         @Bindable var bindableController = captureController
@@ -49,9 +52,9 @@ struct DeviceEditorView: View {
                     TextField("Device Height/Depth", value: $deviceHeight, format: FloatingPointFormatStyle())
                 }.opacity((selectedDevice != .Sensor) && (selectedDevice != .Heater) ? 1 : 0)
                 HStack{
-                    Text("Air Exchange Input:")
+                    Text("Air Input:")
                     TextField("Air Exchange Input", text: $airSource)
-                }.opacity(selectedDevice == .AirExchange ? 1 : 0)
+                }.opacity(((selectedDevice == .AirExchange) || (selectedDevice == .AirSupply)) ? 1 : 0)
                 Picker("Air Conditioner Type", selection: $conditioningType) {
                     ForEach(Device.conditioningType.allCases) { conditioner in
                         Text(self.device.conditionerConverter(conditioner: conditioner)).tag(conditioner)
@@ -62,6 +65,21 @@ struct DeviceEditorView: View {
                         Text(self.device.supplierConverter(supplier: supplier)).tag(supplier)
                     }
                 }.opacity(selectedDevice == .AirSupply ? 1 : 0)
+                Picker("Door Type", selection: $doorType) {
+                    ForEach(Device.doorType.allCases) { door in
+                        Text(self.device.doorConverter(door: door)).tag(door)
+                    }
+                }.opacity(selectedDevice == .DoorOpen ? 1 : 0)
+                Picker("Window Type", selection: $windowType) {
+                    ForEach(Device.windowType.allCases) { window in
+                        Text(self.device.windowConverter(window: window)).tag(window)
+                    }
+                }.opacity(selectedDevice == .WindowOpen ? 1 : 0)
+                Picker("How Open is it?", selection: $openCondition) {
+                    ForEach(Device.openCondition.allCases) { open in
+                        Text(self.device.openConverter(open: open)).tag(open)
+                    }
+                }.opacity(((selectedDevice == .WindowOpen) || (selectedDevice == .DoorOpen)) ? 1 : 0)
                 Toggle(isOn: $deviceOnCeiling){
                     Text("Is the device on the ceiling?")
                 }
@@ -77,7 +95,10 @@ struct DeviceEditorView: View {
                                 type: selectedDevice,
                                 direction: selectedDirection,
                                 conditioner: conditioningType,
-                                supplier: supplyType)
+                                supplier: supplyType,
+                                window: windowType,
+                                door: doorType,
+                                open: openCondition)
                 captureController.addDevice(device: device)
                 onScreen = false
             }, label: {

@@ -87,10 +87,10 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     func generateCSV() -> URL {
         var fileURL: URL!
         // heading of CSV file.
-        let heading = "Tag, X (m), Y (m), Z (m), Device Category, Air Flow Direction, On Ceiling, Width (cm), Height/Depth (cm), Air Source, Air Conditioner Type, Air Supply Type\n"
+        let heading = "Tag, X (m), Y (m), Z (m), Device Category, Air Flow Direction, On Ceiling, Width (cm), Height/Depth (cm), Air Source, Air Conditioner Type, Air Supply Type, Window Type, Door Type, How Open\n"
         
         // file rows
-        let rows = deviceLocations.map { "\($0.getTag()),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.getType()),\($0.getDirection()),\($0.getOnCeiling()),\($0.getWidth()),\($0.getHeight()),\($0.getAirSource()),\($0.getConditionerType()),\($0.getSupplierType())" }
+        let rows = deviceLocations.map { "\($0.getTag()),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.getType()),\($0.getDirection()),\($0.getOnCeiling()),\($0.getWidth()),\($0.getHeight()),\($0.getAirSource()),\($0.getConditionerType()),\($0.getSupplierType()),\($0.getWindowType()),\($0.getDoorType()),\($0.getOpenType())" }
         
         // rows to string data
         let stringData = heading + rows.joined(separator: "\n")
