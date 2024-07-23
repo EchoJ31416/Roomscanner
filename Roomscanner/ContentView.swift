@@ -38,7 +38,8 @@ struct ActivityView: UIViewControllerRepresentable {
 struct ScanningView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(RoomCaptureController.self) private var captureController
-    @State private var current_coords: [Float] = [0.0, 1.0, 0.0]
+    @State private var current_coords: simd_float4x4 = simd_float4x4()
+    @State private var current_angle: Float = 0
     @State private var showingDeviceManager: Bool = false
     
     var body: some View {
@@ -80,14 +81,18 @@ struct ScanningView: View {
                         DeviceEditorView(onScreen: $showingDeviceManager)
                     })
                 Spacer()
-                Text("\(String(describing: captureController.roomCaptureView.captureSession.arSession))")
+//                Text("\(String(describing: captureController.roomCaptureView.captureSession.arSession))")
+//                    .padding()
+//                    .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 4))
+//                    .padding()
+                Button(action: {
+                    current_coords = captureController.getTransform()
+                    current_angle = captureController.getYAngle()
+                }, label: {
+                    Text("Show Transform: \(current_angle)").font(.title2)
+                }).buttonStyle(.borderedProminent)
+                    .cornerRadius(40)
                     .padding()
-                    .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 4))
-                    .padding()
-                /*Text(String(format: "%.2f", current_coords[0])+", "+String(format: "%.2f", current_coords[1])+", "+String(format: "%.2f", current_coords[2]))
-                    .padding()
-                    .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 4))
-                    .padding()*/
             }
         }
     }

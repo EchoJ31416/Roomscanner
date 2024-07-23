@@ -18,8 +18,6 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     var showExportButton = false
     var showShareSheet = false
     var exportUrl: URL?
-    //private var arSession: ARSession
-    //private var arConfig: ARWorldTrackingConfiguration
     var sessionConfig: RoomCaptureSession.Configuration
     var finalResult: CapturedRoom?
     var deviceID: Int = 0
@@ -28,12 +26,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     var deviceLocations: [Device] = []
   
     init() {
-        //let arConfig = ARWorldTrackingConfiguration()
-        //arConfig.worldAlignment = .gravityAndHeading
-        
-        //arSession.configuration = arConfig
-        //arSession.run(arConfig)
-        roomCaptureView = RoomCaptureView(frame: CGRect(x: 0, y: 0, width: 42, height: 42))//, arSession: arSession)
+        roomCaptureView = RoomCaptureView(frame: CGRect(x: 0, y: 0, width: 42, height: 42))
         sessionConfig = RoomCaptureSession.Configuration()
         let arConfig = ARWorldTrackingConfiguration()
         arConfig.worldAlignment = .gravityAndHeading
@@ -51,12 +44,12 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         roomCaptureView.captureSession.stop()
     }
     
-    func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        //roomCaptureView.captureSession.arSession.currentFrame
-        let transform = frame.camera.transform
-        let position = transform.columns.3
-        print(position.x, position.y, position.z)     // UPDATING
-    }
+//    func session(_ session: ARSession, didUpdate frame: ARFrame) -> simd_float3 {
+//        //let frame = roomCaptureView.captureSession.arSession.currentFrame
+//        let transform = frame.camera.transform
+//        let position = transform.columns.3
+//        return simd_make_float3(position)    // UPDATING
+//    }
   
     func captureView(shouldPresent roomDataForProcessing: CapturedRoomData, error: Error?) -> Bool {
         return true
@@ -129,6 +122,12 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
         let transform = currentFrame!.camera.transform
         return transform
+    }
+    
+    func getYAngle() -> Float {
+        let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
+        let transform = currentFrame!.camera.transform
+        return 180*(asin(transform.columns.2[0])/Float.pi)
     }
     
     func addDevice(device: Device){

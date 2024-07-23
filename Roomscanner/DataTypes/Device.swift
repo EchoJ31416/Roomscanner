@@ -281,7 +281,7 @@ class Device{
     }
     
     func getYAngle() -> Float{
-        return 180*(asin(self.transform.columns.0[2])/Float.pi)
+        return 180*(asin(self.transform.columns.2[0])/Float.pi)
     }
     
     func getTag() -> Int{

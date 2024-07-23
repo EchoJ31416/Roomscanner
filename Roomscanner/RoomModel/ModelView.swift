@@ -230,6 +230,8 @@ struct ModelView: View {
             case .Left:
                 if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
+                } else if (((device.getYAngle() - getWallYAngle()) <= -45) && ((device.getYAngle() - getWallYAngle()) >= -135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 }
@@ -243,11 +245,19 @@ struct ModelView: View {
                 //node.simdTransform = node.simdTransform
                 if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                } else if (((device.getYAngle() - getWallYAngle()) <= -45) && ((device.getYAngle() - getWallYAngle()) >= -135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                } else {
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Away:
                 //node.simdTransform = node.simdTransform
                 if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                }else if (((device.getYAngle() - getWallYAngle()) <= -45) && ((device.getYAngle() - getWallYAngle()) >= -135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                } else {
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .NA:
                 node.simdTransform = node.simdTransform
@@ -302,7 +312,7 @@ struct ModelView: View {
     }
     
     func getWallYAngle() -> Float {
-        return 180*(asin(self.wallTransforms[0].columns.0[2])/Float.pi)
+        return 180*(asin(self.wallTransforms[0].columns.2[0])/Float.pi)
     }
 }
 
