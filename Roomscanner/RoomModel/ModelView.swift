@@ -228,18 +228,20 @@ struct ModelView: View {
             case .Down:
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Left:
-                if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
-                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
-                } else if (((device.getYAngle() - getWallYAngle()) <= -45) && ((device.getYAngle() - getWallYAngle()) >= -135)){
-                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
-                } else {
+                if (((device.getYAngle() - getWallYAngle()) >= -45) && ((device.getYAngle() - getWallYAngle()) <= 45)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                } else if (((device.getYAngle() - getWallYAngle()) <= -135) || ((device.getYAngle() - getWallYAngle()) >= 135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                } else {
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Right:
-                if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
-                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
-                } else {
+                if (((device.getYAngle() - getWallYAngle()) >= -45) && ((device.getYAngle() - getWallYAngle()) <= 45)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                } else if (((device.getYAngle() - getWallYAngle()) <= -135) || ((device.getYAngle() - getWallYAngle()) >= 135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                } else {
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Towards:
                 //node.simdTransform = node.simdTransform
