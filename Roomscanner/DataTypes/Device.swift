@@ -285,6 +285,27 @@ class Device{
         return 180*(asin(self.transform.columns.2[0])/Float.pi)
     }
     
+    func getAngle() -> Float{
+        var ySinAngle = 180*asin(-transform.columns.2[0])/Float.pi
+        var xAngle = atan2(transform.columns.2[1], transform.columns.2[2])
+        var yCosAngle = 180*acos(transform.columns.2[2]/abs(cos(xAngle)))/Float.pi
+        var yFinalAngle: Float = 0.0
+        if (yCosAngle >= 90) {
+            if (ySinAngle >= 0) {
+                yFinalAngle = yCosAngle
+            } else {
+                yFinalAngle = 360-yCosAngle
+            }
+        } else {
+            if (ySinAngle >= 0) {
+                yFinalAngle = ySinAngle
+            } else {
+                yFinalAngle = 360+ySinAngle
+            }
+        }
+        return yFinalAngle
+    }
+    
     func getTag() -> Int{
         return self.tag
     }

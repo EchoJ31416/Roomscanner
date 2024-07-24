@@ -86,10 +86,10 @@ struct ModelView: View {
             VStack {
                 HStack{
 //                    if devices.count != 0 {
-//                        Text("\(devices[0].getYAngle()), \(getWallYAngle()), \(devices[0].getYAngle() - getWallYAngle())")
+//                        Text("\(devices[0].getAngle()), \(getWallYAngle()), \(devices[0].getAngle() - getWallYAngle())")
 //                            .padding()
 //                    }
-                    Text("\(xAngle), \(yCosAngle), \(ySinAngle), \(getWallYAngle()), \(wallTransforms[0])")
+                    //Text("\(xAngle), \(yCosAngle), \(ySinAngle), \(getWallYAngle()), \(wallTransforms[0])")
                         
                     Button(action: {
                         self.export()
@@ -132,7 +132,7 @@ struct ModelView: View {
                         Text("Device Tag: \(device.getTag())")
                         Spacer()
                         let location = device.getLocation()
-                        Text("\(device.getYAngle()), \(getWallYAngle()), \(device.getYAngle() - getWallYAngle())")
+                        Text("\(device.getAngle()), \(getWallYAngle()), \(device.getAngle() - getWallYAngle())")
                         //Text("Location: [\(String(format: "%.2f", location.x)), \(String(format: "%.2f", location.y)), \(String(format: "%.2f", location.z))]")
                         Spacer()
                         Text("Type: \(device.getType())")
@@ -243,35 +243,35 @@ struct ModelView: View {
             case .Down:
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Left:
-                if (((device.getYAngle() - getWallYAngle()) >= -45) && ((device.getYAngle() - getWallYAngle()) <= 45)){
+                if (((device.getAngle() - getWallYAngle()) >= -45) && ((device.getAngle() - getWallYAngle()) <= 45)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                } else if (((device.getYAngle() - getWallYAngle()) <= -135) || ((device.getYAngle() - getWallYAngle()) >= 135)){
+                } else if (((device.getAngle() - getWallYAngle()) <= -135) || ((device.getAngle() - getWallYAngle()) >= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Right:
-                if (((device.getYAngle() - getWallYAngle()) >= -45) && ((device.getYAngle() - getWallYAngle()) <= 45)){
+                if (((device.getAngle() - getWallYAngle()) >= -45) && ((device.getAngle() - getWallYAngle()) <= 45)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                } else if (((device.getYAngle() - getWallYAngle()) <= -135) || ((device.getYAngle() - getWallYAngle()) >= 135)){
+                } else if (((device.getAngle() - getWallYAngle()) <= -135) || ((device.getAngle() - getWallYAngle()) >= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Towards:
                 //node.simdTransform = node.simdTransform
-                if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
+                if (((device.getAngle() - getWallYAngle()) >= 45) && ((device.getAngle() - getWallYAngle()) <= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: -90)
-                } else if (((device.getYAngle() - getWallYAngle()) <= -45) && ((device.getYAngle() - getWallYAngle()) >= -135)){
+                } else if (((device.getAngle() - getWallYAngle()) <= -45) && ((device.getAngle() - getWallYAngle()) >= -135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Away:
                 //node.simdTransform = node.simdTransform
-                if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
+                if (((device.getAngle() - getWallYAngle()) >= 45) && ((device.getAngle() - getWallYAngle()) <= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                }else if (((device.getYAngle() - getWallYAngle()) <= -45) && ((device.getYAngle() - getWallYAngle()) >= -135)){
+                }else if (((device.getAngle() - getWallYAngle()) <= -45) && ((device.getAngle() - getWallYAngle()) >= -135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
@@ -330,24 +330,25 @@ struct ModelView: View {
     }
     
     func getWallYAngle() -> Float {
-        var yFinalAngle: Float
-        var xAngle = atan2(self.wallTransforms[0].columns.2[1], self.wallTransforms[0].columns.2[2])
-        var yCosAngle = acos(self.wallTransforms[0].columns.2[2]/cos(xAngle))
-        var ySinAngle = asin(-self.wallTransforms[0].columns.2[0])
-        if (yCosAngle >= Float.pi/2) {
+        var ySinAngle = 180*asin(-wallTransforms[0].columns.2[0])/Float.pi
+        var xAngle = atan2(wallTransforms[0].columns.2[1], wallTransforms[0].columns.2[2])
+        var xCos = cos(xAngle)
+        var yCosAngle = 180*acos(wallTransforms[0].columns.2[2]/abs(cos(xAngle)))/Float.pi
+        var yFinalAngle: Float = 0.0
+        if (yCosAngle >= 90) {
             if (ySinAngle >= 0) {
                 yFinalAngle = yCosAngle
             } else {
-                yFinalAngle = 2*Float.pi-yCosAngle
+                yFinalAngle = 360-yCosAngle
             }
         } else {
             if (ySinAngle >= 0) {
                 yFinalAngle = ySinAngle
             } else {
-                yFinalAngle = 2*Float.pi+ySinAngle
+                yFinalAngle = 360+ySinAngle
             }
         }
-        return 180*yFinalAngle/Float.pi
+        return yFinalAngle
     }
 }
 
