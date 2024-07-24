@@ -244,12 +244,14 @@ struct ModelView: View {
             case .Down:
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Left:
-                if (((angleDiff) >= -45) && ((angleDiff) <= 45)){
+                if ((abs(angleDiff) <= 45) || (abs(angleDiff) >= 315)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                } else if (((angleDiff) <= -135) || ((angleDiff) >= 135)){
-                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                } else {
+                } else if ((abs(angleDiff) > 45) && (abs(angleDiff) <= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
+                } else if ((abs(angleDiff) > 135) && (abs(angleDiff) <= 225)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: -90)
+                } else {
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 180)
                 }
             case .Right:
                 if (((angleDiff) >= -45) && ((angleDiff) <= 45)){
