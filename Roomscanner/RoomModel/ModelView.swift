@@ -261,14 +261,14 @@ struct ModelView: View {
                 }
             case .Towards:
                 //node.simdTransform = node.simdTransform
-                if (((angleDiff) >= 45) && ((angleDiff) <= 135)){
-                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: -90)
-                } else if (((angleDiff) <= -45) && ((angleDiff) >= -135)){
-                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                } else if (((angleDiff) <= -45) && ((angleDiff) >= -135)){
-                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                } else {
+                if ((abs(angleDiff) <= 45) || (abs(angleDiff) >= 315)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
+                } else if ((abs(angleDiff) > 45) && (abs(angleDiff) <= 135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                } else if ((abs(angleDiff) > 135) && (abs(angleDiff) <= 225)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 180)
+                } else {
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: -90)
                 }
             case .Away:
                 //node.simdTransform = node.simdTransform
@@ -283,7 +283,7 @@ struct ModelView: View {
                 node.simdTransform = node.simdTransform
             }
             var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
-            directional.simdTransform = rotateX(initial: directional.simdTransform, degrees: 90)
+            directional.simdTransform = rotateX(initial: directional.simdTransform, degrees: -90)
             //directional.simdEulerAngles = device.getRotation()
             node.addChildNode(directional)
         }
