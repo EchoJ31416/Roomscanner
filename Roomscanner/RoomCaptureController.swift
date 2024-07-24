@@ -142,7 +142,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         var ySinAngle = 180*asin(-transform.columns.2[0])/Float.pi
         var xAngle = atan2(transform.columns.2[1], transform.columns.2[2])
         var xCos = cos(xAngle)
-        var yCosAngle = 180*acos(transform.columns.2[2]/cos(xAngle))/Float.pi
+        var yCosAngle = 180*acos(transform.columns.2[2]/abs(cos(xAngle)))/Float.pi
         return [180*xAngle/Float.pi, xCos, yCosAngle, ySinAngle]
     }
     
