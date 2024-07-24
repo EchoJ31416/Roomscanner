@@ -39,7 +39,7 @@ struct ScanningView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(RoomCaptureController.self) private var captureController
     @State private var current_coords: simd_float4x4 = simd_float4x4()
-    @State private var current_angle: Float = 0
+    @State private var current_angle: [Float] = []
     @State private var showingDeviceManager: Bool = false
     
     var body: some View {
@@ -87,7 +87,7 @@ struct ScanningView: View {
 //                    .padding()
                 Button(action: {
                     current_coords = captureController.getTransform()
-                    current_angle = captureController.getYAngle()
+                    current_angle = captureController.getAngles()
                 }, label: {
                     Text("Show Transform: \(current_angle)").font(.title2)
                 }).buttonStyle(.borderedProminent)

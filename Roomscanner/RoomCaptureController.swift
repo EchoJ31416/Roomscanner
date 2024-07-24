@@ -130,6 +130,22 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         return 180*(asin(transform.columns.2[0])/Float.pi)
     }
     
+    func getXAngle() -> Float {
+        let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
+        let transform = currentFrame!.camera.transform
+        return atan2(transform.columns.2[1], transform.columns.2[2])
+    }
+    
+    func getAngles() -> [Float] {
+        let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
+        let transform = currentFrame!.camera.transform
+        var ySinAngle = 180*asin(-transform.columns.2[0])/Float.pi
+        var xAngle = atan2(transform.columns.2[1], transform.columns.2[2])
+        var xCos = cos(xAngle)
+        var yCosAngle = 180*acos(transform.columns.2[2]/cos(xAngle))/Float.pi
+        return [180*xAngle/Float.pi, xCos, yCosAngle, ySinAngle]
+    }
+    
     func addDevice(device: Device){
         //var device = Device(location: position, tag: deviceID)
         if device.getTag() == -1{

@@ -13,12 +13,26 @@ struct ModelView: View {
     var scene = makeScene()
     var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
     var exportURL = FileManager.default.temporaryDirectory.appending(path: "room.usdz")
+    var xAngle: Float
+    var yCosAngle: Float
+    var ySinAngle: Float
     @State var showShareSheet = false
     @ObservedObject var viewModel = ViewModel()
     @Environment(\.presentationMode) var presentationMode
     
     
     init(devices: [Device], wallTransforms: [simd_float4x4]){
+        if !wallTransforms.isEmpty{
+            ySinAngle = 180*asin(-wallTransforms[0].columns.2[0])/Float.pi
+            xAngle = 180*atan2(wallTransforms[0].columns.2[1], wallTransforms[0].columns.2[2])/Float.pi
+            yCosAngle = 180*acos(wallTransforms[0].columns.2[2]/cos(xAngle))/Float.pi
+            
+        } else {
+            xAngle = 0
+            yCosAngle = 0
+            ySinAngle = 0
+        }
+        
         viewModel.deviceList = devices
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
@@ -71,10 +85,11 @@ struct ModelView: View {
             }.opacity(1))
             VStack {
                 HStack{
-                    if devices.count != 0 {
-                        Text("\(devices[0].getYAngle()), \(getWallYAngle()), \(devices[0].getYAngle() - getWallYAngle())")
-                            .padding()
-                    }
+//                    if devices.count != 0 {
+//                        Text("\(devices[0].getYAngle()), \(getWallYAngle()), \(devices[0].getYAngle() - getWallYAngle())")
+//                            .padding()
+//                    }
+                    Text("\(xAngle), \(yCosAngle), \(ySinAngle), \(getWallYAngle()), \(wallTransforms[0])")
                         
                     Button(action: {
                         self.export()
@@ -246,7 +261,7 @@ struct ModelView: View {
             case .Towards:
                 //node.simdTransform = node.simdTransform
                 if (((device.getYAngle() - getWallYAngle()) >= 45) && ((device.getYAngle() - getWallYAngle()) <= 135)){
-                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: -90)
                 } else if (((device.getYAngle() - getWallYAngle()) <= -45) && ((device.getYAngle() - getWallYAngle()) >= -135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
@@ -264,9 +279,10 @@ struct ModelView: View {
             case .NA:
                 node.simdTransform = node.simdTransform
             }
-            //var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
+            var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
+            directional.simdTransform = rotateX(initial: directional.simdTransform, degrees: 90)
             //directional.simdEulerAngles = device.getRotation()
-            //node.addChildNode(directional)
+            node.addChildNode(directional)
         }
         var color: UIColor
         switch device.getRawType() {
@@ -314,7 +330,24 @@ struct ModelView: View {
     }
     
     func getWallYAngle() -> Float {
-        return 180*(asin(self.wallTransforms[0].columns.2[0])/Float.pi)
+        var yFinalAngle: Float
+        var xAngle = atan2(self.wallTransforms[0].columns.2[1], self.wallTransforms[0].columns.2[2])
+        var yCosAngle = acos(self.wallTransforms[0].columns.2[2]/cos(xAngle))
+        var ySinAngle = asin(-self.wallTransforms[0].columns.2[0])
+        if (yCosAngle >= Float.pi/2) {
+            if (ySinAngle >= 0) {
+                yFinalAngle = yCosAngle
+            } else {
+                yFinalAngle = 2*Float.pi-yCosAngle
+            }
+        } else {
+            if (ySinAngle >= 0) {
+                yFinalAngle = ySinAngle
+            } else {
+                yFinalAngle = 2*Float.pi+ySinAngle
+            }
+        }
+        return 180*yFinalAngle/Float.pi
     }
 }
 
