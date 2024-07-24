@@ -143,7 +143,21 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         var xAngle = atan2(transform.columns.2[1], transform.columns.2[2])
         var xCos = cos(xAngle)
         var yCosAngle = 180*acos(transform.columns.2[2]/abs(cos(xAngle)))/Float.pi
-        return [180*xAngle/Float.pi, xCos, yCosAngle, ySinAngle]
+        var yFinalAngle: Float = 0.0
+        if (yCosAngle >= 90) {
+            if (ySinAngle >= 0) {
+                yFinalAngle = yCosAngle
+            } else {
+                yFinalAngle = 360-yCosAngle
+            }
+        } else {
+            if (ySinAngle >= 0) {
+                yFinalAngle = ySinAngle
+            } else {
+                yFinalAngle = 360+ySinAngle
+            }
+        }
+        return [180*xAngle/Float.pi, xCos, yCosAngle, ySinAngle, yFinalAngle]
     }
     
     func addDevice(device: Device){
