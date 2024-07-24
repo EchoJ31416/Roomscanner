@@ -227,6 +227,18 @@ struct ModelView: View {
     }
     
     func addDevice(device: Device) -> SCNNode {
+        var color: UIColor
+        switch device.getRawType() {
+        case .Sensor: color = UIColor.black
+        case .AirConditioning: color = UIColor.blue
+        case .Heater: color = UIColor.green
+        case .Fan: color = UIColor.cyan
+        case .AirSupply: color = UIColor.red
+        case .AirReturn: color = UIColor.brown
+        case .AirExchange: color = UIColor.lightGray
+        case .DoorOpen: color = UIColor.orange
+        case .WindowOpen: color = UIColor.yellow
+        }
         var node: SCNNode = SCNNode()
         node.castsShadow = true
         node.simdPosition = device.getLocation()
@@ -254,9 +266,11 @@ struct ModelView: View {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 180)
                 }
             case .Right:
-                if (((angleDiff) >= -45) && ((angleDiff) <= 45)){
-                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                } else if (((angleDiff) <= -135) || ((angleDiff) >= 135)){
+                if ((abs(angleDiff) <= 45) || (abs(angleDiff) >= 315)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: -90)
+                } else if ((abs(angleDiff) > 45) && (abs(angleDiff) <= 135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 180)
+                } else if ((abs(angleDiff) > 135) && (abs(angleDiff) <= 225)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
@@ -287,22 +301,12 @@ struct ModelView: View {
                 node.simdTransform = node.simdTransform
             }
             var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
+            directional.geometry?.firstMaterial?.diffuse.contents = color
             directional.simdTransform = rotateX(initial: directional.simdTransform, degrees: -90)
             //directional.simdEulerAngles = device.getRotation()
             node.addChildNode(directional)
         }
-        var color: UIColor
-        switch device.getRawType() {
-        case .Sensor: color = UIColor.black
-        case .AirConditioning: color = UIColor.blue
-        case .Heater: color = UIColor.green
-        case .Fan: color = UIColor.cyan
-        case .AirSupply: color = UIColor.red
-        case .AirReturn: color = UIColor.brown
-        case .AirExchange: color = UIColor.lightGray
-        case .DoorOpen: color = UIColor.orange
-        case .WindowOpen: color = UIColor.yellow
-        }
+        
         geometry.firstMaterial?.diffuse.contents = color
         node.geometry = geometry
         //node = SCNNode(geometry: geometry)
