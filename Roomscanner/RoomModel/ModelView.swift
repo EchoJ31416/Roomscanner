@@ -237,41 +237,44 @@ struct ModelView: View {
             geometry = SCNPlane(width: CGFloat(device.getWidth()/100), height: CGFloat(device.getHeight()/100))
             geometry.firstMaterial?.isDoubleSided = true
             node.simdTransform = parallel(inWall: node.simdTransform, paraWall: self.wallTransforms[0])
+            var angleDiff = device.getAngle() - getWallYAngle()
             switch device.getRawDirection() {
             case .Up:
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Down:
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Left:
-                if (((device.getAngle() - getWallYAngle()) >= -45) && ((device.getAngle() - getWallYAngle()) <= 45)){
+                if (((angleDiff) >= -45) && ((angleDiff) <= 45)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                } else if (((device.getAngle() - getWallYAngle()) <= -135) || ((device.getAngle() - getWallYAngle()) >= 135)){
+                } else if (((angleDiff) <= -135) || ((angleDiff) >= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Right:
-                if (((device.getAngle() - getWallYAngle()) >= -45) && ((device.getAngle() - getWallYAngle()) <= 45)){
+                if (((angleDiff) >= -45) && ((angleDiff) <= 45)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                } else if (((device.getAngle() - getWallYAngle()) <= -135) || ((device.getAngle() - getWallYAngle()) >= 135)){
+                } else if (((angleDiff) <= -135) || ((angleDiff) >= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Towards:
                 //node.simdTransform = node.simdTransform
-                if (((device.getAngle() - getWallYAngle()) >= 45) && ((device.getAngle() - getWallYAngle()) <= 135)){
+                if (((angleDiff) >= 45) && ((angleDiff) <= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: -90)
-                } else if (((device.getAngle() - getWallYAngle()) <= -45) && ((device.getAngle() - getWallYAngle()) >= -135)){
+                } else if (((angleDiff) <= -45) && ((angleDiff) >= -135)){
+                    node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
+                } else if (((angleDiff) <= -45) && ((angleDiff) >= -135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Away:
                 //node.simdTransform = node.simdTransform
-                if (((device.getAngle() - getWallYAngle()) >= 45) && ((device.getAngle() - getWallYAngle()) <= 135)){
+                if (((angleDiff) >= 45) && ((angleDiff) <= 135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
-                }else if (((device.getAngle() - getWallYAngle()) <= -45) && ((device.getAngle() - getWallYAngle()) >= -135)){
+                }else if (((angleDiff) <= -45) && ((angleDiff) >= -135)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
                 } else {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
