@@ -122,7 +122,3 @@ struct DeviceEditorView: View {
         
     }
 }
-
-/*#Preview {
-    DeviceEditorView()
-}*/

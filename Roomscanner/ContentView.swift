@@ -69,7 +69,6 @@ struct ScanningView: View {
                 }
                 Spacer()
                 Button(action: {
-                    //current_coords = captureController.getLocation()
                     showingDeviceManager.toggle()
                 }, label: {
                     Text("Add Device").font(.title2)
@@ -81,10 +80,6 @@ struct ScanningView: View {
                         DeviceEditorView(onScreen: $showingDeviceManager)
                     })
                 Spacer()
-//                Text("\(String(describing: captureController.roomCaptureView.captureSession.arSession))")
-//                    .padding()
-//                    .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 4))
-//                    .padding()
                 Button(action: {
                     current_coords = captureController.getTransform()
                     current_angle = captureController.getAngles()

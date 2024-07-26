@@ -42,7 +42,6 @@ struct ModelView: View {
         
         self.wallTransforms = wallTransforms
         
-        //wallGeometry.firstMaterial?.diffuse.contents = UIColor.red
         if wallTransforms.count != 0 {
             var wallNode: SCNNode
             var wallGeometry = SCNPyramid(width: 0.125, height: 0.3, length: 0.0625)
@@ -81,8 +80,6 @@ struct ModelView: View {
                 captureController.clearResults()
                 //captureController.stopSession()
                 presentationMode.wrappedValue.dismiss()
-                //wallNode.removeFromParentNode()
-                //scene?.rootNode.remove c
             }.opacity(1))
             VStack {
                 HStack{
@@ -134,12 +131,10 @@ struct ModelView: View {
                         Spacer()
                         let location = device.getLocation()
                         Text("\(device.getAngle()), \(getWallYAngle()), \(device.getAngle() - getWallYAngle())")
-                        //Text("Location: [\(String(format: "%.2f", location.x)), \(String(format: "%.2f", location.y)), \(String(format: "%.2f", location.z))]")
                         Spacer()
                         Text("Type: \(device.getType())")
                         Spacer()
                         Button(action: {
-                            //current_coords = captureController.getLocation()
                             showingDeviceManager.toggle()
                         }, label: {
                             Text("Edit Device").font(.title2)
@@ -201,7 +196,6 @@ struct ModelView: View {
         initColumns.append(simd_make_float3(initial.columns.2))
         var smallMatrix = simd_float3x3(initColumns)
         var rotateMatrix = simd_float3x3(simd_make_float3(1, 0, 0), simd_make_float3(0, cos(degrees), -sin(degrees)), simd_make_float3(0, sin(degrees), cos(degrees)))
-        //var inverseMatrix = smallMatrix.inverse
         var normalMatrix = smallMatrix*rotateMatrix//inverseMatrix.transpose
         var newColumns: [simd_float4] = []
         newColumns.append(simd_make_float4(normalMatrix.columns.0))
@@ -229,7 +223,6 @@ struct ModelView: View {
         initColumns.append(simd_make_float3(initial.columns.2))
         var smallMatrix = simd_float3x3(initColumns)
         var rotateMatrix = simd_float3x3(simd_make_float3(cos(degrees), 0, sin(degrees)), simd_make_float3(0, 1, 0), simd_make_float3(-sin(degrees), 0, cos(degrees)))
-        //var inverseMatrix = smallMatrix.inverse
         var normalMatrix = smallMatrix*rotateMatrix//inverseMatrix.transpose
         var newColumns: [simd_float4] = []
         newColumns.append(simd_make_float4(normalMatrix.columns.0))
@@ -289,7 +282,6 @@ struct ModelView: View {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 }
             case .Towards:
-                //node.simdTransform = node.simdTransform
                 if ((abs(angleDiff) <= 45) || (abs(angleDiff) >= 315)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 0)
                 } else if ((abs(angleDiff) > 45) && (abs(angleDiff) <= 135)){
@@ -300,7 +292,6 @@ struct ModelView: View {
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: -90)
                 }
             case .Away:
-                //node.simdTransform = node.simdTransform
                 if ((abs(angleDiff) <= 45) || (abs(angleDiff) >= 315)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 180)
                 } else if ((abs(angleDiff) > 45) && (abs(angleDiff) <= 135)){
@@ -316,13 +307,11 @@ struct ModelView: View {
             var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
             directional.geometry?.firstMaterial?.diffuse.contents = color
             directional.simdTransform = rotateX(initial: directional.simdTransform, degrees: -90)
-            //directional.simdEulerAngles = device.getRotation()
             node.addChildNode(directional)
         }
         
         geometry.firstMaterial?.diffuse.contents = color
         node.geometry = geometry
-        //node = SCNNode(geometry: geometry)
         return node
     }
     
@@ -375,9 +364,3 @@ struct ModelView: View {
         return yFinalAngle
     }
 }
-
-//struct ModelView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ModelView(devices: [Device(location: simd_float3(0.0, 1.0, 0.0))])
-//    }
-//}

@@ -33,7 +33,6 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         roomCaptureView.captureSession.arSession.run(arConfig)
         roomCaptureView.captureSession.delegate = self
         roomCaptureView.delegate = self
-        
     }
   
     func startSession() {
@@ -43,13 +42,6 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     func stopSession() {
         roomCaptureView.captureSession.stop()
     }
-    
-//    func session(_ session: ARSession, didUpdate frame: ARFrame) -> simd_float3 {
-//        //let frame = roomCaptureView.captureSession.arSession.currentFrame
-//        let transform = frame.camera.transform
-//        let position = transform.columns.3
-//        return simd_make_float3(position)    // UPDATING
-//    }
   
     func captureView(shouldPresent roomDataForProcessing: CapturedRoomData, error: Error?) -> Bool {
         return true
