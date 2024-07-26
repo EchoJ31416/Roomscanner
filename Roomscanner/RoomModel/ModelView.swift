@@ -8,6 +8,7 @@ import SceneKit.ModelIO
 
 struct ModelView: View {
     @Environment(RoomCaptureController.self) private var captureController
+    @State private var showingDeviceManager: Bool = false
     var devices: [Device] = []
     var wallTransforms: [simd_float4x4] = []
     var scene = makeScene()
@@ -137,6 +138,18 @@ struct ModelView: View {
                         Spacer()
                         Text("Type: \(device.getType())")
                         Spacer()
+                        Button(action: {
+                            //current_coords = captureController.getLocation()
+                            showingDeviceManager.toggle()
+                        }, label: {
+                            Text("Edit Device").font(.title2)
+                        })  .buttonStyle(.borderedProminent)
+                            .cornerRadius(40)
+                            .opacity(1)
+                            .padding()
+                            .sheet(isPresented: $showingDeviceManager, content:{
+                                DeviceEditorView(onScreen: $showingDeviceManager)
+                            })
                         
                         if viewModel.selectedDevice != nil {
                             Button(action: viewModel.clearSelection) {

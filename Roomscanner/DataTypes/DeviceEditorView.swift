@@ -11,6 +11,7 @@ import ARKit
 struct DeviceEditorView: View {
     @Binding var onScreen: Bool
     @Environment(RoomCaptureController.self) private var captureController
+    @State private var editMode = false
     @State private var device = Device()
     @State private var deviceTag: Int = -1
     @State private var deviceOnCeiling: Bool = false
@@ -24,6 +25,14 @@ struct DeviceEditorView: View {
     @State private var doorType: Device.doorType = .NA
     @State private var windowType: Device.windowType = .NA
     @State private var openCondition: Device.openCondition = .NA
+    
+    init(onScreen: Binding<Bool>){
+        self._onScreen = onScreen
+    }
+//    
+//    init(editDevice: Device){
+//        
+//    }
     
     var body: some View {
         @Bindable var bindableController = captureController
@@ -107,6 +116,10 @@ struct DeviceEditorView: View {
                 .cornerRadius(40)
                 .padding()
         }
+    }
+    
+    func setDevice(device: Device){
+        
     }
 }
 

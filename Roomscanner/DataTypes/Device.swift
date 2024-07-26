@@ -144,8 +144,8 @@ class Device{
         case .AirSupply: return "Air Supplier"
         case .AirReturn: return "Air Return"
         case .AirExchange: return "Air Exchanger"
-        case .DoorOpen: return "Open door"
-        case .WindowOpen: return "Open window"
+        case .DoorOpen: return "Door"
+        case .WindowOpen: return "Window"
         default: return "Unknown Device"
         }
     }
