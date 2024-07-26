@@ -260,7 +260,7 @@ struct ModelView: View {
             case .Up:
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Down:
-                node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
+                node.simdTransform = rotateX(initial: node.simdTransform, degrees: -90)
             case .Left:
                 if ((abs(angleDiff) <= 45) || (abs(angleDiff) >= 315)){
                     node.simdTransform = rotateY(initial: node.simdTransform, degrees: 90)
