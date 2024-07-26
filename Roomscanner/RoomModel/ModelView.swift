@@ -14,26 +14,12 @@ struct ModelView: View {
     var scene = makeScene()
     var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
     var exportURL = FileManager.default.temporaryDirectory.appending(path: "room.usdz")
-    var xAngle: Float
-    var yCosAngle: Float
-    var ySinAngle: Float
     @State var showShareSheet = false
     @ObservedObject var viewModel = ViewModel()
     @Environment(\.presentationMode) var presentationMode
     
     
     init(devices: [Device], wallTransforms: [simd_float4x4]){
-        if !wallTransforms.isEmpty{
-            ySinAngle = 180*asin(-wallTransforms[0].columns.2[0])/Float.pi
-            xAngle = 180*atan2(wallTransforms[0].columns.2[1], wallTransforms[0].columns.2[2])/Float.pi
-            yCosAngle = 180*acos(wallTransforms[0].columns.2[2]/cos(xAngle))/Float.pi
-            
-        } else {
-            xAngle = 0
-            yCosAngle = 0
-            ySinAngle = 0
-        }
-        
         viewModel.deviceList = devices
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
@@ -83,12 +69,6 @@ struct ModelView: View {
             }.opacity(1))
             VStack {
                 HStack{
-//                    if devices.count != 0 {
-//                        Text("\(devices[0].getAngle()), \(getWallYAngle()), \(devices[0].getAngle() - getWallYAngle())")
-//                            .padding()
-//                    }
-                    //Text("\(xAngle), \(yCosAngle), \(ySinAngle), \(getWallYAngle()), \(wallTransforms[0])")
-                        
                     Button(action: {
                         self.export()
                     }, label: {
@@ -343,10 +323,9 @@ struct ModelView: View {
     }
     
     func getWallYAngle() -> Float {
-        var ySinAngle = 180*asin(-wallTransforms[0].columns.2[0])/Float.pi
-        var xAngle = atan2(wallTransforms[0].columns.2[1], wallTransforms[0].columns.2[2])
-        var xCos = cos(xAngle)
-        var yCosAngle = 180*acos(wallTransforms[0].columns.2[2]/abs(cos(xAngle)))/Float.pi
+        let ySinAngle = 180*asin(-wallTransforms[0].columns.2[0])/Float.pi
+        let xAngle = atan2(wallTransforms[0].columns.2[1], wallTransforms[0].columns.2[2])
+        let yCosAngle = 180*acos(wallTransforms[0].columns.2[2]/abs(cos(xAngle)))/Float.pi
         var yFinalAngle: Float = 0.0
         if (yCosAngle >= 90) {
             if (ySinAngle >= 0) {
