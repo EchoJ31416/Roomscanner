@@ -13,4 +13,12 @@ enum Door: String, CaseIterable, Identifiable{
     case NA
     
     var id: Self { self }
+    
+    var stringValue: String{
+        switch self{
+        case .swing: return "Swinging Door"
+        case .sliding: return "Sliding Door"
+        case .NA: return "N/A"
+        }
+    }
 }

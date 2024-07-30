@@ -107,12 +107,12 @@ struct ModelView: View {
                     }
                     if let device = viewModel.selectedDevice {
                         Spacer()
-                        Text("Device Tag: \(device.getTag())")
+                        Text("Device Tag: \(device.tag)")
                         Spacer()
                         let location = device.getLocation()
                         Text("\(device.getAngle()), \(getWallYAngle()), \(device.getAngle() - getWallYAngle())")
                         Spacer()
-                        Text("Type: \(device.getType())")
+                        Text("Type: \(device.type.stringValue)")
                         Spacer()
                         Button(action: {
                             showingDeviceManager.toggle()
@@ -162,7 +162,7 @@ struct ModelView: View {
     }
   
     func deviceNode(device: Device) -> SCNNode? {
-        scene?.rootNode.childNode(withName: "Device: \(device.getTag())", recursively: false)
+        scene?.rootNode.childNode(withName: "Device: \(device.tag)", recursively: false)
     }
     
     func export() {
@@ -217,7 +217,7 @@ struct ModelView: View {
     
     func addDevice(device: Device) -> SCNNode {
         var color: UIColor
-        switch device.getRawType() {
+        switch device.type {
         case .Sensor: color = UIColor.black
         case .AirConditioning: color = UIColor.blue
         case .Heater: color = UIColor.green
@@ -231,15 +231,15 @@ struct ModelView: View {
         var node: SCNNode = SCNNode()
         node.castsShadow = true
         node.simdPosition = device.getLocation()
-        node.name = "Device: \(device.getTag())"
+        node.name = "Device: \(device.tag)"
         var geometry = SCNGeometry()
         geometry = SCNSphere(radius: 0.04)
-        if ((device.getRawType() != Category.Sensor) && (device.getRawType() != Category.Heater)){
-            geometry = SCNPlane(width: CGFloat(device.getWidth()/100), height: CGFloat(device.getHeight()/100))
+        if ((device.type != Category.Sensor) && (device.type != Category.Heater)){
+            geometry = SCNPlane(width: CGFloat(device.width/100), height: CGFloat(device.height/100))
             geometry.firstMaterial?.isDoubleSided = true
             node.simdTransform = parallel(inWall: node.simdTransform, paraWall: self.wallTransforms[0])
             var angleDiff = device.getAngle() - getWallYAngle()
-            switch device.getRawDirection() {
+            switch device.direction{
             case .Up:
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Down:

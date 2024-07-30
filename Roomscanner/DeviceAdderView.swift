@@ -40,7 +40,7 @@ struct DeviceAdderView: View {
             List{
                 Picker("Device Type", selection: $selectedDevice) {
                     ForEach(Category.allCases) { device in
-                        Text(self.device.categoryConverter(category: device)).tag(device)
+                        Text(device.stringValue).tag(device)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -52,7 +52,7 @@ struct DeviceAdderView: View {
                 }
                 Picker("Air Flow Direction", selection: $selectedDirection) {
                     ForEach(Directions.allCases) { direction in
-                        Text(self.device.directionConverter(direction: direction)).tag(direction)
+                        Text(direction.stringValue).tag(direction)
                             .foregroundStyle(.secondary)
                     }
                 }.opacity((selectedDevice != .Sensor) && (selectedDevice != .Heater) ? 1 : 0)
@@ -76,31 +76,31 @@ struct DeviceAdderView: View {
                 }.opacity(((selectedDevice == .AirExchange) || (selectedDevice == .AirSupply)) ? 1 : 0)
                 Picker("Air Conditioner Type", selection: $conditioningType) {
                     ForEach(Conditioner.allCases) { conditioner in
-                        Text(self.device.conditionerConverter(conditioner: conditioner)).tag(conditioner)
+                        Text(conditioner.stringValue).tag(conditioner)
                             .foregroundStyle(.secondary)
                     }
                 }.opacity(selectedDevice == .AirConditioning ? 1 : 0)
                 Picker("Air Supply Type", selection: $supplierType) {
                     ForEach(Supplier.allCases) { supplier in
-                        Text(self.device.supplierConverter(supplier: supplier)).tag(supplier)
+                        Text(supplier.stringValue).tag(supplier)
                             .foregroundStyle(.secondary)
                     }
                 }.opacity(selectedDevice == .AirSupply ? 1 : 0)
                 Picker("Door Type", selection: $doorType) {
                     ForEach(Door.allCases) { door in
-                        Text(self.device.doorConverter(door: door)).tag(door)
+                        Text(door.stringValue).tag(door)
                             .foregroundStyle(.secondary)
                     }
                 }.opacity(selectedDevice == .DoorOpen ? 1 : 0)
                 Picker("Window Type", selection: $windowType) {
                     ForEach(Window.allCases) { window in
-                        Text(self.device.windowConverter(window: window)).tag(window)
+                        Text(window.stringValue).tag(window)
                             .foregroundStyle(.secondary)
                     }
                 }.opacity(selectedDevice == .WindowOpen ? 1 : 0)
                 Picker("How Open is it?", selection: $openCondition) {
                     ForEach(Open.allCases) { open in
-                        Text(self.device.openConverter(open: open)).tag(open)
+                        Text(open.stringValue).tag(open)
                             .foregroundStyle(.secondary)
                     }
                 }.opacity(((selectedDevice == .WindowOpen) || (selectedDevice == .DoorOpen)) ? 1 : 0)

@@ -55,7 +55,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         }
         let maxHeight = self.highestPoint()
         for device in self.deviceLocations {
-            if device.getOnCeiling() {
+            if device.onCeiling {
                 var oldLocation = device.getLocation()
                 device.setLocation(location: simd_make_float3(oldLocation.x, maxHeight, oldLocation.z))
             }
@@ -79,7 +79,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         let heading = "Tag, X (m), Y (m), Z (m), Device Category, Air Flow Direction, On Ceiling, Width (cm), Height/Depth (cm), Air Source, Air Conditioner Type, Air Supply Type, Window Type, Door Type, How Open\n"
         
         // file rows
-        let rows = deviceLocations.map { "\($0.getTag()),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.getType()),\($0.getDirection()),\($0.getOnCeiling()),\($0.getWidth()),\($0.getHeight()),\($0.getAirSource()),\($0.getConditionerType()),\($0.getSupplierType()),\($0.getWindowType()),\($0.getDoorType()),\($0.getOpenType())" }
+        let rows = deviceLocations.map { "\($0.tag),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.type.stringValue),\($0.direction.stringValue),\($0.onCeiling),\($0.width),\($0.height),\($0.airSource),\($0.conditioner.stringValue),\($0.supplier.stringValue),\($0.window.stringValue),\($0.door.stringValue),\($0.open.stringValue)" }
         
         // rows to string data
         let stringData = heading + rows.joined(separator: "\n")
@@ -154,8 +154,8 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     
     func addDevice(device: Device){
         //var device = Device(location: position, tag: deviceID)
-        if device.getTag() == -1{
-            device.setTag(tag: deviceID)
+        if device.tag == -1{
+            device.tag = deviceID
             deviceID = deviceID + 1
         }
         deviceLocations.append(device)

@@ -7,7 +7,7 @@ class ViewModel: NSObject, ObservableObject {
     var Index: Int = 0
     
     var title: String {
-        "\(selectedDevice?.getTag())" ?? ""
+        "\(selectedDevice?.tag)" ?? ""
     }
 
     func selectNextDevice() {

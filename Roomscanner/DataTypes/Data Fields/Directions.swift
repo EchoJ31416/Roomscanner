@@ -17,4 +17,12 @@ enum Directions: String, CaseIterable, Identifiable{
     case NA
     
     var id: Self { self }
+    
+    var stringValue: String{
+        if (self == .NA){
+            return "N/A"
+        } else {
+            return rawValue
+        }
+    }
 }

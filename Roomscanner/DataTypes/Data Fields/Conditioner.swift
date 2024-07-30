@@ -13,4 +13,12 @@ enum Conditioner: String, CaseIterable, Identifiable{
     case NA
     
     var id: Self { self }
+    
+    var stringValue: String{
+        switch self{
+        case .window: return "Window Air Conditioner"
+        case .split: return "Split Air Conditioner"
+        case .NA: return "N/A"
+        }
+    }
 }
