@@ -16,86 +16,13 @@ class Device{
     private var width: Float
     private var height: Float
     private var airSource: String
-    enum category: String, CaseIterable, Identifiable{
-        case Sensor
-        case AirConditioning
-        case Heater
-        case Fan
-        case AirSupply
-        case AirReturn
-        case AirExchange
-        case DoorOpen
-        case WindowOpen
-        
-        var id: Self { self }
-    }
-    private var type = category.Sensor
-    
-    enum directions: String, CaseIterable, Identifiable{
-        case Up
-        case Down
-        case Left
-        case Right
-        case Towards
-        case Away
-        case NA
-        
-        var id: Self { self }
-    }
-    private var direction = directions.NA
-    
-    enum conditioningType: String, CaseIterable, Identifiable{
-        case window
-        case split
-        case NA
-        
-        var id: Self { self }
-    }
-    private var conditioner = conditioningType.NA
-    
-    enum supplyType: String, CaseIterable, Identifiable{
-        case sameRoom
-        case sharedAir
-        case mixedAir
-        case freshAir
-        case NA
-        
-        var id: Self { self }
-    }
-    private var supplier = supplyType.NA
-    
-    enum windowType: String, CaseIterable, Identifiable{
-        case leftHung
-        case rightHung
-        case topHung
-        case bottomHung
-        case sliding
-        case NA
-        
-        var id: Self { self }
-    }
-    private var window = windowType.NA
-    
-    enum doorType: String, CaseIterable, Identifiable{
-        case sliding
-        case swing
-        case NA
-        
-        var id: Self { self }
-    }
-    private var door = doorType.NA
-    
-    enum openCondition: String, CaseIterable, Identifiable{
-        case closed
-        case slight
-        case half
-        case open
-        case mostly
-        case NA
-        
-        var id: Self { self }
-    }
-    private var open = openCondition.NA
+    private var type = Category.Sensor
+    private var direction = Directions.NA
+    private var conditioner = Conditioner.NA
+    private var supplier = Supplier.NA
+    private var window = Window.NA
+    private var door = Door.NA
+    private var open = Open.NA
     
     init(
          transform: simd_float4x4 = simd_float4x4(0),
@@ -104,13 +31,13 @@ class Device{
          airSource: String = "",
          width: Float = 0,
          height: Float = 0,
-         type: category = category.Sensor,
-         direction: directions = directions.NA,
-         conditioner: conditioningType = conditioningType.NA,
-         supplier: supplyType = supplyType.NA,
-         window: windowType = windowType.NA,
-         door: doorType = doorType.NA,
-         open: openCondition = openCondition.NA)
+         type: Category = .Sensor,
+         direction: Directions = .NA,
+         conditioner: Conditioner = .NA,
+         supplier: Supplier = .NA,
+         window: Window = .NA,
+         door: Door = .NA,
+         open: Open = .NA)
     {
         self.transform = transform
         self.tag = tag
@@ -127,7 +54,7 @@ class Device{
         self.open = open
     }
     
-    func getRawType() -> category{
+    func getRawType() -> Category{
         return type
     }
     
@@ -135,7 +62,7 @@ class Device{
         return self.categoryConverter(category: self.getRawType())
     }
     
-    func categoryConverter(category: Device.category) -> String{
+    func categoryConverter(category: Category) -> String{
         switch category {
         case .Sensor: return "Sensor"
         case .AirConditioning: return "Air Conditioner"
@@ -154,7 +81,7 @@ class Device{
         return airSource
     }
     
-    func getRawConditioner() -> conditioningType{
+    func getRawConditioner() -> Conditioner{
         return conditioner
     }
     
@@ -162,7 +89,7 @@ class Device{
         return self.conditionerConverter(conditioner: self.getRawConditioner())
     }
     
-    func conditionerConverter(conditioner: Device.conditioningType) -> String{
+    func conditionerConverter(conditioner: Conditioner) -> String{
         switch conditioner {
         case .window: return "Window Air Conditioner"
         case .split: return "Split Air Conditioner"
@@ -171,7 +98,7 @@ class Device{
         }
     }
     
-    func getRawDirection() -> directions{
+    func getRawDirection() -> Directions{
         return direction
     }
     
@@ -179,7 +106,7 @@ class Device{
         return self.directionConverter(direction: self.getRawDirection())
     }
     
-    func directionConverter(direction: Device.directions) -> String{
+    func directionConverter(direction: Directions) -> String{
         if (direction == .NA){
             return "N/A"
         } else {
@@ -187,7 +114,7 @@ class Device{
         }
     }
     
-    func getRawSupplier() -> supplyType{
+    func getRawSupplier() -> Supplier{
         return supplier
     }
     
@@ -195,7 +122,7 @@ class Device{
         return self.supplierConverter(supplier: self.getRawSupplier())
     }
     
-    func supplierConverter(supplier: Device.supplyType) -> String{
+    func supplierConverter(supplier: Supplier) -> String{
         switch supplier{
         case .sameRoom: return "Same room recirculation"
         case .sharedAir: return "Shared recirculated air"
@@ -206,7 +133,7 @@ class Device{
         }
     }
     
-    func getRawWindow() -> windowType{
+    func getRawWindow() -> Window{
         return window
     }
     
@@ -214,7 +141,7 @@ class Device{
         return self.windowConverter(window: self.getRawWindow())
     }
     
-    func windowConverter(window: Device.windowType) -> String{
+    func windowConverter(window: Window) -> String{
         switch window{
         case .topHung: return "Window hung from the top"
         case .bottomHung: return "Window hung from the bottom"
@@ -226,7 +153,7 @@ class Device{
         }
     }
     
-    func getRawDoor() -> doorType{
+    func getRawDoor() -> Door{
         return door
     }
     
@@ -234,7 +161,7 @@ class Device{
         return self.doorConverter(door: self.getRawDoor())
     }
     
-    func doorConverter(door: Device.doorType) -> String{
+    func doorConverter(door: Door) -> String{
         switch door{
         case .swing: return "Swinging Door"
         case .sliding: return "Sliding Door"
@@ -243,7 +170,7 @@ class Device{
         }
     }
     
-    func getRawOpen() -> openCondition{
+    func getRawOpen() -> Open{
         return open
     }
     
@@ -251,7 +178,7 @@ class Device{
         return self.openConverter(open: self.getRawOpen())
     }
     
-    func openConverter(open: Device.openCondition) -> String{
+    func openConverter(open: Open) -> String{
         switch open{
         case .closed: return "Closed"
         case .slight: return "Slightly Open"

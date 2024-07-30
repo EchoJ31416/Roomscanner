@@ -234,7 +234,7 @@ struct ModelView: View {
         node.name = "Device: \(device.getTag())"
         var geometry = SCNGeometry()
         geometry = SCNSphere(radius: 0.04)
-        if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
+        if ((device.getRawType() != Category.Sensor) && (device.getRawType() != Category.Heater)){
             geometry = SCNPlane(width: CGFloat(device.getWidth()/100), height: CGFloat(device.getHeight()/100))
             geometry.firstMaterial?.isDoubleSided = true
             node.simdTransform = parallel(inWall: node.simdTransform, paraWall: self.wallTransforms[0])
