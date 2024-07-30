@@ -9,7 +9,7 @@ import SwiftUI
 import ARKit
 
 struct DeviceEditorView: View {
-    @Binding var onScreen: Bool
+    //@Binding var onScreen: Bool
     @Environment(RoomCaptureController.self) private var captureController
     @State private var editMode = false
     @State private var device = Device()
@@ -26,9 +26,9 @@ struct DeviceEditorView: View {
     @State private var windowType: Device.windowType = .NA
     @State private var openCondition: Device.openCondition = .NA
     
-    init(onScreen: Binding<Bool>){
-        self._onScreen = onScreen
-    }
+//    init(onScreen: Binding<Bool>){
+//        self._onScreen = onScreen
+//    }
 //    
 //    init(editDevice: Device){
 //        
@@ -109,7 +109,7 @@ struct DeviceEditorView: View {
                                 door: doorType,
                                 open: openCondition)
                 captureController.addDevice(device: device)
-                onScreen = false
+                //onScreen = false
             }, label: {
                 Text("Done").font(.title2)
             })  .buttonStyle(.borderedProminent)

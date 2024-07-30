@@ -122,9 +122,12 @@ struct ModelView: View {
                             .cornerRadius(40)
                             .opacity(1)
                             .padding()
-                            .sheet(isPresented: $showingDeviceManager, content:{
-                                DeviceEditorView(onScreen: $showingDeviceManager)
-                            })
+//                            .sheet(isPresented: $showingDeviceManager, content:{
+//                                DeviceEditorView(onScreen: $showingDeviceManager)
+//                            })
+                        if showingDeviceManager {
+                            DeviceEditorView()
+                        }
                         
                         if viewModel.selectedDevice != nil {
                             Button(action: viewModel.clearSelection) {
