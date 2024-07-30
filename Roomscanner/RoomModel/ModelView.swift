@@ -286,7 +286,9 @@ struct ModelView: View {
             }
             var directional = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 0.02, height: 0.5))
             directional.geometry?.firstMaterial?.diffuse.contents = color
+            directional.simdPivot.columns.3[1] = directional.simdPivot.columns.3[1] - 0.25
             directional.simdTransform = rotateX(initial: directional.simdTransform, degrees: -90)
+            directional.simdTransform.columns
             node.addChildNode(directional)
         }
         
