@@ -77,7 +77,7 @@ struct ScanningView: View {
                     .opacity(captureController.showExportButton ? 0 : 1)
                     .padding()
                     .sheet(isPresented: $showingDeviceManager, content:{
-                        DeviceEditorView(onScreen: $showingDeviceManager)
+                        DeviceAdderView(onScreen: $showingDeviceManager)
                     })
                 Spacer()
                 Button(action: {
