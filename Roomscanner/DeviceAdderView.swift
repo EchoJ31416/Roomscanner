@@ -56,19 +56,19 @@ struct DeviceAdderView: View {
                             Text(direction.stringValue).tag(direction)
                                 .foregroundStyle(.secondary)
                         }
-                    }
+                    }.onDisappear(perform: {selectedDirection = .NA})
                     HStack{
                         Text("Device Width (cm): ")
                         TextField("Device Width", value: $deviceWidth, format: FloatingPointFormatStyle())
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.trailing)
-                    }
+                    }.onDisappear(perform: {deviceWidth = 0})
                     HStack{
                         Text("Device Height/Depth (cm): ")
                         TextField("Device Height/Depth", value: $deviceHeight, format: FloatingPointFormatStyle())
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.trailing)
-                    }
+                    }.onDisappear(perform: {deviceHeight = 0})
                 }
                 if ((selectedDevice == .AirExchange) || (selectedDevice == .AirSupply)) {
                     HStack{
@@ -76,7 +76,7 @@ struct DeviceAdderView: View {
                         TextField("Air Input", text: $airSource)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.trailing)
-                    }
+                    }.onDisappear(perform: {airSource = ""})
                 }
                 if selectedDevice == .AirConditioning {
                     Picker("Air Conditioner Type", selection: $conditioningType) {
@@ -84,7 +84,7 @@ struct DeviceAdderView: View {
                             Text(conditioner.stringValue).tag(conditioner)
                                 .foregroundStyle(.secondary)
                         }
-                    }
+                    }.onDisappear(perform: {conditioningType = .NA})
                 }
                 if selectedDevice == .AirSupply {
                     Picker("Air Supply Type", selection: $supplierType) {
@@ -92,7 +92,7 @@ struct DeviceAdderView: View {
                             Text(supplier.stringValue).tag(supplier)
                                 .foregroundStyle(.secondary)
                         }
-                    }
+                    }.onDisappear(perform: {supplierType = .NA})
                 }
                 if selectedDevice == .DoorOpen {
                     Picker("Door Type", selection: $doorType) {
@@ -100,7 +100,7 @@ struct DeviceAdderView: View {
                             Text(door.stringValue).tag(door)
                                 .foregroundStyle(.secondary)
                         }
-                    }
+                    }.onDisappear(perform: {doorType = .NA})
                 }
                 if selectedDevice == .WindowOpen {
                     Picker("Window Type", selection: $windowType) {
@@ -108,7 +108,7 @@ struct DeviceAdderView: View {
                             Text(window.stringValue).tag(window)
                                 .foregroundStyle(.secondary)
                         }
-                    }
+                    }.onDisappear(perform: {windowType = .NA})
                 }
                 if ((selectedDevice == .WindowOpen) || (selectedDevice == .DoorOpen)) {
                     Picker("How Open is it?", selection: $openCondition) {
@@ -116,12 +116,12 @@ struct DeviceAdderView: View {
                             Text(open.stringValue).tag(open)
                                 .foregroundStyle(.secondary)
                         }
-                    }
+                    }.onDisappear(perform: {openCondition = .NA})
                 }
                 if selectedDevice != .DoorOpen {
                     Toggle(isOn: $deviceOnCeiling){
                         Text("Is the device on the ceiling?")
-                    }
+                    }.onDisappear(perform: {deviceOnCeiling = false})
                 }
             }
             Button(action: {
