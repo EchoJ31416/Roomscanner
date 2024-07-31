@@ -9,7 +9,7 @@ import Foundation
 import RealityKit
 import RoomPlan
 
-class Device{
+struct Device{
     var transform: simd_float4x4
     var tag: Int
     var onCeiling: Bool
@@ -58,7 +58,7 @@ class Device{
         return simd_make_float3(self.transform.columns.3)
     }
     
-    func setLocation(location: simd_float3){
+    mutating func setLocation(location: simd_float3){
         self.transform.columns.3 = simd_make_float4(location)
         self.transform.columns.3[3] = 1
     }

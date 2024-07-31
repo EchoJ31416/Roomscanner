@@ -54,7 +54,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
             self.wallTransforms.append(wall.transform)
         }
         let maxHeight = self.highestPoint()
-        for device in self.deviceLocations {
+        for var device in self.deviceLocations {
             if device.onCeiling {
                 var oldLocation = device.getLocation()
                 device.setLocation(location: simd_make_float3(oldLocation.x, maxHeight, oldLocation.z))
@@ -153,7 +153,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     }
     
     func addDevice(device: Device){
-        //var device = Device(location: position, tag: deviceID)
+        var device = device
         if device.tag == -1{
             device.tag = deviceID
             deviceID = deviceID + 1

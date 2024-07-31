@@ -13,32 +13,16 @@ struct DeviceAdderView: View {
     @Environment(RoomCaptureController.self) private var captureController
     @State private var editMode = false
     @State private var device = Device()
-    @State private var deviceTag: Int = -1
-    @State private var deviceOnCeiling: Bool = false
-    @State private var deviceWidth: Float = 0.0
-    @State private var deviceHeight: Float = 0.0
-    @State private var airSource: String = ""
-    @State private var selectedDevice: Category = .Sensor
-    @State private var selectedDirection: Directions = .NA
-    @State private var conditioningType: Conditioner = .NA
-    @State private var supplierType: Supplier = .NA
-    @State private var doorType: Door = .NA
-    @State private var windowType: Window = .NA
-    @State private var openCondition: Open = .NA
     
     init(onScreen: Binding<Bool>){
         self._onScreen = onScreen
     }
-//
-//    init(editDevice: Device){
-//
-//    }
     
     var body: some View {
         @Bindable var bindableController = captureController
         VStack{
             List{
-                Picker("Device Type", selection: $selectedDevice) {
+                Picker("Device Type", selection: $device.type) {
                     ForEach(Category.allCases) { device in
                         Text(device.stringValue).tag(device)
                             .foregroundStyle(.secondary)
@@ -46,99 +30,85 @@ struct DeviceAdderView: View {
                 }
                 HStack{
                     Text("Device Tag (Numerical Only):")
-                    TextField("Device Tag", value: $deviceTag, format: IntegerFormatStyle())
+                    TextField("Device Tag", value: $device.tag, format: IntegerFormatStyle())
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
                 }
-                if (selectedDevice != .Sensor) && (selectedDevice != .Heater) {
-                    Picker("Air Flow Direction", selection: $selectedDirection) {
+                if (device.type != .Sensor) && (device.type != .Heater) {
+                    Picker("Air Flow Direction", selection: $device.direction) {
                         ForEach(Directions.allCases) { direction in
                             Text(direction.stringValue).tag(direction)
                                 .foregroundStyle(.secondary)
                         }
-                    }.onDisappear(perform: {selectedDirection = .NA})
+                    }.onDisappear(perform: {device.direction = .NA})
                     HStack{
                         Text("Device Width (cm): ")
-                        TextField("Device Width", value: $deviceWidth, format: FloatingPointFormatStyle())
+                        TextField("Device Width", value: $device.width, format: FloatingPointFormatStyle())
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.trailing)
-                    }.onDisappear(perform: {deviceWidth = 0})
+                    }.onDisappear(perform: {device.width = 0})
                     HStack{
                         Text("Device Height/Depth (cm): ")
-                        TextField("Device Height/Depth", value: $deviceHeight, format: FloatingPointFormatStyle())
+                        TextField("Device Height/Depth", value: $device.height, format: FloatingPointFormatStyle())
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.trailing)
-                    }.onDisappear(perform: {deviceHeight = 0})
+                    }.onDisappear(perform: {device.height = 0})
                 }
-                if ((selectedDevice == .AirExchange) || (selectedDevice == .AirSupply)) {
+                if ((device.type == .AirExchange) || (device.type == .AirSupply)) {
                     HStack{
                         Text("Air Input:")
-                        TextField("Air Input", text: $airSource)
+                        TextField("Air Input", text: $device.airSource)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.trailing)
-                    }.onDisappear(perform: {airSource = ""})
+                    }.onDisappear(perform: {device.airSource = ""})
                 }
-                if selectedDevice == .AirConditioning {
-                    Picker("Air Conditioner Type", selection: $conditioningType) {
+                if device.type == .AirConditioning {
+                    Picker("Air Conditioner Type", selection: $device.conditioner) {
                         ForEach(Conditioner.allCases) { conditioner in
                             Text(conditioner.stringValue).tag(conditioner)
                                 .foregroundStyle(.secondary)
                         }
-                    }.onDisappear(perform: {conditioningType = .NA})
+                    }.onDisappear(perform: {device.conditioner = .NA})
                 }
-                if selectedDevice == .AirSupply {
-                    Picker("Air Supply Type", selection: $supplierType) {
+                if device.type == .AirSupply {
+                    Picker("Air Supply Type", selection: $device.supplier) {
                         ForEach(Supplier.allCases) { supplier in
                             Text(supplier.stringValue).tag(supplier)
                                 .foregroundStyle(.secondary)
                         }
-                    }.onDisappear(perform: {supplierType = .NA})
+                    }.onDisappear(perform: {device.supplier = .NA})
                 }
-                if selectedDevice == .DoorOpen {
-                    Picker("Door Type", selection: $doorType) {
+                if device.type == .DoorOpen {
+                    Picker("Door Type", selection: $device.door) {
                         ForEach(Door.allCases) { door in
                             Text(door.stringValue).tag(door)
                                 .foregroundStyle(.secondary)
                         }
-                    }.onDisappear(perform: {doorType = .NA})
+                    }.onDisappear(perform: {device.door = .NA})
                 }
-                if selectedDevice == .WindowOpen {
-                    Picker("Window Type", selection: $windowType) {
+                if device.type == .WindowOpen {
+                    Picker("Window Type", selection: $device.window) {
                         ForEach(Window.allCases) { window in
                             Text(window.stringValue).tag(window)
                                 .foregroundStyle(.secondary)
                         }
-                    }.onDisappear(perform: {windowType = .NA})
+                    }.onDisappear(perform: {device.window = .NA})
                 }
-                if ((selectedDevice == .WindowOpen) || (selectedDevice == .DoorOpen)) {
-                    Picker("How Open is it?", selection: $openCondition) {
+                if ((device.type == .WindowOpen) || (device.type == .DoorOpen)) {
+                    Picker("How Open is it?", selection: $device.open) {
                         ForEach(Open.allCases) { open in
                             Text(open.stringValue).tag(open)
                                 .foregroundStyle(.secondary)
                         }
-                    }.onDisappear(perform: {openCondition = .NA})
+                    }.onDisappear(perform: {device.open = .NA})
                 }
-                if selectedDevice != .DoorOpen {
-                    Toggle(isOn: $deviceOnCeiling){
+                if device.type != .DoorOpen {
+                    Toggle(isOn: $device.onCeiling){
                         Text("Is the device on the ceiling?")
-                    }.onDisappear(perform: {deviceOnCeiling = false})
+                    }.onDisappear(perform: {device.onCeiling = false})
                 }
             }
             Button(action: {
-                device = Device(
-                                transform: captureController.getTransform(),
-                                tag: deviceTag,
-                                onCeiling: deviceOnCeiling,
-                                airSource: airSource,
-                                width: deviceWidth,
-                                height: deviceHeight,
-                                type: selectedDevice,
-                                direction: selectedDirection,
-                                conditioner: conditioningType,
-                                supplier: supplierType,
-                                window: windowType,
-                                door: doorType,
-                                open: openCondition)
                 captureController.addDevice(device: device)
                 onScreen = false
             }, label: {
