@@ -50,62 +50,78 @@ struct DeviceEditorView: View {
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
                 }
-                Picker("Air Flow Direction", selection: $selectedDirection) {
-                    ForEach(Directions.allCases) { direction in
-                        Text(direction.stringValue).tag(direction)
-                            .foregroundStyle(.secondary)
+                if (selectedDevice != .Sensor) && (selectedDevice != .Heater) {
+                    Picker("Air Flow Direction", selection: $selectedDirection) {
+                        ForEach(Directions.allCases) { direction in
+                            Text(direction.stringValue).tag(direction)
+                                .foregroundStyle(.secondary)
+                        }
                     }
-                }.opacity((selectedDevice != .Sensor) && (selectedDevice != .Heater) ? 1 : 0)
-                HStack{
-                    Text("Device Width (cm): ")
-                    TextField("Device Width", value: $deviceWidth, format: FloatingPointFormatStyle())
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.trailing)
-                }.opacity((selectedDevice != .Sensor) && (selectedDevice != .Heater) ? 1 : 0)
-                HStack{
-                    Text("Device Height/Depth (cm): ")
-                    TextField("Device Height/Depth", value: $deviceHeight, format: FloatingPointFormatStyle())
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.trailing)
-                }.opacity((selectedDevice != .Sensor) && (selectedDevice != .Heater) ? 1 : 0)
-                HStack{
-                    Text("Air Input:")
-                    TextField("Air Input", text: $airSource)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.trailing)
-                }.opacity(((selectedDevice == .AirExchange) || (selectedDevice == .AirSupply)) ? 1 : 0)
-                Picker("Air Conditioner Type", selection: $conditioningType) {
-                    ForEach(Conditioner.allCases) { conditioner in
-                        Text(conditioner.stringValue).tag(conditioner)
+                    HStack{
+                        Text("Device Width (cm): ")
+                        TextField("Device Width", value: $deviceWidth, format: FloatingPointFormatStyle())
                             .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.trailing)
                     }
-                }.opacity(selectedDevice == .AirConditioning ? 1 : 0)
-                Picker("Air Supply Type", selection: $supplierType) {
-                    ForEach(Supplier.allCases) { supplier in
-                        Text(supplier.stringValue).tag(supplier)
+                    HStack{
+                        Text("Device Height/Depth (cm): ")
+                        TextField("Device Height/Depth", value: $deviceHeight, format: FloatingPointFormatStyle())
                             .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.trailing)
                     }
-                }.opacity(selectedDevice == .AirSupply ? 1 : 0)
-                Picker("Door Type", selection: $doorType) {
-                    ForEach(Door.allCases) { door in
-                        Text(door.stringValue).tag(door)
+                }
+                if ((selectedDevice == .AirExchange) || (selectedDevice == .AirSupply)) {
+                    HStack{
+                        Text("Air Input:")
+                        TextField("Air Input", text: $airSource)
                             .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.trailing)
                     }
-                }.opacity(selectedDevice == .DoorOpen ? 1 : 0)
-                Picker("Window Type", selection: $windowType) {
-                    ForEach(Window.allCases) { window in
-                        Text(window.stringValue).tag(window)
-                            .foregroundStyle(.secondary)
+                }
+                if selectedDevice == .AirConditioning {
+                    Picker("Air Conditioner Type", selection: $conditioningType) {
+                        ForEach(Conditioner.allCases) { conditioner in
+                            Text(conditioner.stringValue).tag(conditioner)
+                                .foregroundStyle(.secondary)
+                        }
                     }
-                }.opacity(selectedDevice == .WindowOpen ? 1 : 0)
-                Picker("How Open is it?", selection: $openCondition) {
-                    ForEach(Open.allCases) { open in
-                        Text(open.stringValue).tag(open)
-                            .foregroundStyle(.secondary)
+                }
+                if selectedDevice == .AirSupply {
+                    Picker("Air Supply Type", selection: $supplierType) {
+                        ForEach(Supplier.allCases) { supplier in
+                            Text(supplier.stringValue).tag(supplier)
+                                .foregroundStyle(.secondary)
+                        }
                     }
-                }.opacity(((selectedDevice == .WindowOpen) || (selectedDevice == .DoorOpen)) ? 1 : 0)
-                Toggle(isOn: $deviceOnCeiling){
-                    Text("Is the device on the ceiling?")
+                }
+                if selectedDevice == .DoorOpen {
+                    Picker("Door Type", selection: $doorType) {
+                        ForEach(Door.allCases) { door in
+                            Text(door.stringValue).tag(door)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                if selectedDevice == .WindowOpen {
+                    Picker("Window Type", selection: $windowType) {
+                        ForEach(Window.allCases) { window in
+                            Text(window.stringValue).tag(window)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                if ((selectedDevice == .WindowOpen) || (selectedDevice == .DoorOpen)) {
+                    Picker("How Open is it?", selection: $openCondition) {
+                        ForEach(Open.allCases) { open in
+                            Text(open.stringValue).tag(open)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                if selectedDevice != .DoorOpen {
+                    Toggle(isOn: $deviceOnCeiling){
+                        Text("Is the device on the ceiling?")
+                    }
                 }
             }
             Button(action: {
