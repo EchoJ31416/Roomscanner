@@ -108,6 +108,7 @@ struct DeviceView: View {
             }
             Button(action: {
                 if !edit {
+                    device.transform = captureController.getTransform()
                     captureController.addDevice(device: device)
                     device = Device()
                 }

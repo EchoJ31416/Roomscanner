@@ -8,7 +8,7 @@ import SceneKit.ModelIO
 
 struct ModelView: View {
     @Environment(RoomCaptureController.self) private var captureController
-    @State private var showingDeviceManager: Bool = false
+    @State private var showingDeviceManager = false
     @State private var selectedDevice: Device? = nil
     @State private var editMode = true
     @State var Index = 0
