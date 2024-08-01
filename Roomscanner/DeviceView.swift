@@ -8,15 +8,13 @@
 import SwiftUI
 import ARKit
 
-struct DeviceAdderView: View {
-    @Binding var onScreen: Bool
+struct DeviceView: View {
     @Environment(RoomCaptureController.self) private var captureController
     @State private var editMode = false
-    @State private var device = Device()
+    @Binding var device: Device
+    @Binding var onScreen: Bool
+    @Binding var edit: Bool
     
-    init(onScreen: Binding<Bool>){
-        self._onScreen = onScreen
-    }
     
     var body: some View {
         @Bindable var bindableController = captureController
@@ -109,10 +107,13 @@ struct DeviceAdderView: View {
                 }
             }
             Button(action: {
-                captureController.addDevice(device: device)
+                if !edit {
+                    captureController.addDevice(device: device)
+                    device = Device()
+                }
                 onScreen = false
             }, label: {
-                Text("Done").font(.title2)
+                Text(edit ? "Edit" : "Done").font(.title2)
             })  .buttonStyle(.borderedProminent)
                 .cornerRadius(40)
                 .padding()

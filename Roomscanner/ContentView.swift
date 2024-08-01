@@ -41,6 +41,8 @@ struct ScanningView: View {
     @State private var current_coords: simd_float4x4 = simd_float4x4()
     @State private var current_angle: [Float] = []
     @State private var showingDeviceManager: Bool = false
+    @State private var newDevice = Device()
+    @State private var editMode = false
     
     var body: some View {
         @Bindable var bindableController = captureController
@@ -77,7 +79,7 @@ struct ScanningView: View {
                     .opacity(captureController.showExportButton ? 0 : 1)
                     .padding()
                     .sheet(isPresented: $showingDeviceManager, content:{
-                        DeviceAdderView(onScreen: $showingDeviceManager)
+                        DeviceView(device: $newDevice, onScreen: $showingDeviceManager, edit: $editMode)
                     })
                 Spacer()
                 Button(action: {

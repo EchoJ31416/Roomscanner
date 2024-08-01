@@ -9,6 +9,8 @@ import SceneKit.ModelIO
 struct ModelView: View {
     @Environment(RoomCaptureController.self) private var captureController
     @State private var showingDeviceManager: Bool = false
+    @State private var selectedDevice = Device()
+    @State private var editMode = true
     var devices: [Device] = []
     var wallTransforms: [simd_float4x4] = []
     var scene = makeScene()
@@ -21,6 +23,7 @@ struct ModelView: View {
     
     init(devices: [Device], wallTransforms: [simd_float4x4]){
         viewModel.deviceList = devices
+        selectedDevice = viewModel.selectedDevice ?? Device()
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
@@ -97,22 +100,29 @@ struct ModelView: View {
                 HStack {
                     if devices.count != 0{
                         HStack {
-                            Button(action: viewModel.selectPreviousDevice) {
+                            Button(action: {
+                                viewModel.selectPreviousDevice()
+                                selectedDevice = viewModel.selectedDevice!
+                            }) {
                                 Image(systemName: "arrow.backward.circle.fill")
                             }
-                            Button(action: viewModel.selectNextDevice) {
+                            Button(action: {
+                                viewModel.selectNextDevice()
+                                selectedDevice = viewModel.selectedDevice!
+                            }) {
                                 Image(systemName: "arrow.forward.circle.fill")
                             }
                         }
                     }
-                    if let device = viewModel.selectedDevice {
+                    if viewModel.selectedDevice != nil {
+                        //@State var selectedDevice = viewModel.selectedDevice!
                         Spacer()
-                        Text("Device Tag: \(device.tag)")
+                        Text("Device Tag: \(selectedDevice.tag)")
                         Spacer()
-                        let location = device.getLocation()
-                        Text("\(device.getAngle()), \(getWallYAngle()), \(device.getAngle() - getWallYAngle())")
+                        let location = selectedDevice.getLocation()
+                        Text("\(selectedDevice.getAngle()), \(getWallYAngle()), \(selectedDevice.getAngle() - getWallYAngle())")
                         Spacer()
-                        Text("Type: \(device.type.stringValue)")
+                        Text("Type: \(selectedDevice.type.stringValue)")
                         Spacer()
                         Button(action: {
                             showingDeviceManager.toggle()
@@ -122,12 +132,10 @@ struct ModelView: View {
                             .cornerRadius(40)
                             .opacity(1)
                             .padding()
-//                            .sheet(isPresented: $showingDeviceManager, content:{
-//                                DeviceEditorView(onScreen: $showingDeviceManager)
-//                            })
-                        if showingDeviceManager {
-                            DeviceEditorView()
-                        }
+                            .sheet(isPresented: $showingDeviceManager, content:{
+                                DeviceView(device: $selectedDevice, onScreen: $showingDeviceManager, edit: $editMode)
+                            })
+
                         
                         if viewModel.selectedDevice != nil {
                             Button(action: viewModel.clearSelection) {
@@ -169,50 +177,6 @@ struct ModelView: View {
         scene?.write(to: self.exportURL, delegate: nil)
         
         showShareSheet = true
-    }
-    
-    func rotateX(initial: simd_float4x4, degrees: Float) -> simd_float4x4 {
-        var degrees = degrees/180 * Float.pi
-        var initColumns: [simd_float3] = []
-        initColumns.append(simd_make_float3(initial.columns.0))
-        initColumns.append(simd_make_float3(initial.columns.1))
-        initColumns.append(simd_make_float3(initial.columns.2))
-        var smallMatrix = simd_float3x3(initColumns)
-        var rotateMatrix = simd_float3x3(simd_make_float3(1, 0, 0), simd_make_float3(0, cos(degrees), -sin(degrees)), simd_make_float3(0, sin(degrees), cos(degrees)))
-        var normalMatrix = smallMatrix*rotateMatrix//inverseMatrix.transpose
-        var newColumns: [simd_float4] = []
-        newColumns.append(simd_make_float4(normalMatrix.columns.0))
-        newColumns.append(simd_make_float4(normalMatrix.columns.1))
-        newColumns.append(simd_make_float4(normalMatrix.columns.2))
-        newColumns.append(initial.columns.3)
-        return simd_float4x4(newColumns)
-    }
-    
-    func setToFlat(initial: simd_float4x4) -> simd_float4x4{
-        var flatMatrix = simd_float3x3(simd_make_float3(1, 0, 0), simd_make_float3(0, 0, -1), simd_make_float3(0, 1, 0))
-        var newColumns: [simd_float4] = []
-        newColumns.append(simd_make_float4(flatMatrix.columns.0))
-        newColumns.append(simd_make_float4(flatMatrix.columns.1))
-        newColumns.append(simd_make_float4(flatMatrix.columns.2))
-        newColumns.append(initial.columns.3)
-        return simd_float4x4(newColumns)
-    }
-    
-    func rotateY(initial: simd_float4x4, degrees: Float) -> simd_float4x4 {
-        var degrees = degrees/180 * Float.pi
-        var initColumns: [simd_float3] = []
-        initColumns.append(simd_make_float3(initial.columns.0))
-        initColumns.append(simd_make_float3(initial.columns.1))
-        initColumns.append(simd_make_float3(initial.columns.2))
-        var smallMatrix = simd_float3x3(initColumns)
-        var rotateMatrix = simd_float3x3(simd_make_float3(cos(degrees), 0, sin(degrees)), simd_make_float3(0, 1, 0), simd_make_float3(-sin(degrees), 0, cos(degrees)))
-        var normalMatrix = smallMatrix*rotateMatrix//inverseMatrix.transpose
-        var newColumns: [simd_float4] = []
-        newColumns.append(simd_make_float4(normalMatrix.columns.0))
-        newColumns.append(simd_make_float4(normalMatrix.columns.1))
-        newColumns.append(simd_make_float4(normalMatrix.columns.2))
-        newColumns.append(initial.columns.3)
-        return simd_float4x4(newColumns)
     }
     
     func addDevice(device: Device) -> SCNNode {
@@ -312,19 +276,6 @@ struct ModelView: View {
             }
         }
         return minWall
-    }
-    
-    func parallel(inWall: simd_float4x4, paraWall: simd_float4x4) -> simd_float4x4{
-        var initColumns: [simd_float3] = []
-        initColumns.append(simd_make_float3(paraWall.columns.0))
-        initColumns.append(simd_make_float3(paraWall.columns.1))
-        initColumns.append(simd_make_float3(paraWall.columns.2))
-        var newColumns: [simd_float4] = []
-        newColumns.append(simd_make_float4(initColumns[0]))
-        newColumns.append(simd_make_float4(initColumns[1]))
-        newColumns.append(simd_make_float4(initColumns[2]))
-        newColumns.append(inWall.columns.3)
-        return simd_float4x4(newColumns)
     }
     
     func getWallYAngle() -> Float {
