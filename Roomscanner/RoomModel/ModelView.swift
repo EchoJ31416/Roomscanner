@@ -9,21 +9,19 @@ import SceneKit.ModelIO
 struct ModelView: View {
     @Environment(RoomCaptureController.self) private var captureController
     @State private var showingDeviceManager: Bool = false
-    @State private var selectedDevice = Device()
+    @State private var selectedDevice: Device? = nil
     @State private var editMode = true
+    @State var Index = 0
     var devices: [Device] = []
     var wallTransforms: [simd_float4x4] = []
     var scene = makeScene()
     var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
     var exportURL = FileManager.default.temporaryDirectory.appending(path: "room.usdz")
     @State var showShareSheet = false
-    @ObservedObject var viewModel = ViewModel()
     @Environment(\.presentationMode) var presentationMode
     
     
     init(devices: [Device], wallTransforms: [simd_float4x4]){
-        viewModel.deviceList = devices
-        selectedDevice = viewModel.selectedDevice ?? Device()
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
@@ -59,8 +57,8 @@ struct ModelView: View {
         ZStack {
             SceneView(
                 scene: scene,
-                pointOfView: setUpCamera(device: viewModel.selectedDevice),
-                options: viewModel.selectedDevice == nil ? [.allowsCameraControl] : []
+                pointOfView: setUpCamera(device: selectedDevice),
+                options: selectedDevice == nil ? [.allowsCameraControl] : []
             )
             .background(Color.white)
             .edgesIgnoringSafeArea(.all)
@@ -101,28 +99,26 @@ struct ModelView: View {
                     if devices.count != 0{
                         HStack {
                             Button(action: {
-                                viewModel.selectPreviousDevice()
-                                selectedDevice = viewModel.selectedDevice!
+                                selectPreviousDevice()
                             }) {
                                 Image(systemName: "arrow.backward.circle.fill")
                             }
                             Button(action: {
-                                viewModel.selectNextDevice()
-                                selectedDevice = viewModel.selectedDevice!
+                                selectNextDevice()
                             }) {
                                 Image(systemName: "arrow.forward.circle.fill")
                             }
                         }
                     }
-                    if viewModel.selectedDevice != nil {
-                        //@State var selectedDevice = viewModel.selectedDevice!
+                    if selectedDevice != nil {
+                        @State var device = selectedDevice!
                         Spacer()
-                        Text("Device Tag: \(selectedDevice.tag)")
+                        Text("Device Tag: \(device.tag)")
                         Spacer()
-                        let location = selectedDevice.getLocation()
-                        Text("\(selectedDevice.getAngle()), \(getWallYAngle()), \(selectedDevice.getAngle() - getWallYAngle())")
+                        let location = device.getLocation()
+                        Text("\(device.getAngle()), \(getWallYAngle()), \(device.getAngle() - getWallYAngle())")
                         Spacer()
-                        Text("Type: \(selectedDevice.type.stringValue)")
+                        Text("Type: \(device.type.stringValue)")
                         Spacer()
                         Button(action: {
                             showingDeviceManager.toggle()
@@ -133,12 +129,12 @@ struct ModelView: View {
                             .opacity(1)
                             .padding()
                             .sheet(isPresented: $showingDeviceManager, content:{
-                                DeviceView(device: $selectedDevice, onScreen: $showingDeviceManager, edit: $editMode)
+                                DeviceView(device: $device, onScreen: $showingDeviceManager, edit: $editMode)
                             })
 
                         
-                        if viewModel.selectedDevice != nil {
-                            Button(action: viewModel.clearSelection) {
+                        if selectedDevice != nil {
+                            Button(action: clearSelection) {
                                 Image(systemName: "xmark.circle.fill")
                             }
                         }
@@ -297,5 +293,30 @@ struct ModelView: View {
             }
         }
         return yFinalAngle
+    }
+    
+    func selectNextDevice() {
+        changeSelection(offset: 1)
+    }
+
+    func selectPreviousDevice() {
+        changeSelection(offset: -1)
+    }
+
+    func clearSelection() {
+        selectedDevice = nil
+    }
+
+    private func changeSelection(offset: Int) {
+        let newIndex = Index + offset
+
+        if newIndex < 0 {
+            Index = devices.endIndex-1
+        } else if newIndex < devices.endIndex {
+            Index = newIndex
+        } else {
+            Index = 0
+        }
+        self.selectedDevice = devices[Index]
     }
 }
