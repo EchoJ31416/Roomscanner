@@ -11,7 +11,6 @@ struct ModelView: View {
     @State private var showingDeviceManager = false
     @State private var editDevice = Device.emptyDevice
     @State private var selectedDevice: Device? = nil
-    @State private var editMode = true
     @State var Index = 0
     @Binding var devices: [Device]
     var wallTransforms: [simd_float4x4] = []

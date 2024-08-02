@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NewDeviceView: View {
+    @Environment(RoomCaptureController.self) private var captureController
     @State private var newDevice = Device.emptyDevice
     @Binding var devices: [Device]
     @Binding var onScreen: Bool
@@ -23,6 +24,7 @@ struct NewDeviceView: View {
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Add") {
+                            newDevice.transform = captureController.getTransform()
                             devices.append(newDevice)
                             onScreen = false
                         }

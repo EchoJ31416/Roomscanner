@@ -43,7 +43,6 @@ struct ScanningView: View {
     @State private var current_angle: [Float] = []
     @State private var showingDeviceManager: Bool = false
     @State private var newDevice = Device.emptyDevice
-    @State private var editMode = false
     
     var body: some View {
         @Bindable var bindableController = captureController
@@ -115,8 +114,3 @@ struct ContentView: View {
     }
 }
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//  }
-//}
