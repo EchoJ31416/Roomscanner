@@ -149,6 +149,7 @@ struct ModelView: View {
                                                 Button("Done") {
                                                     showingDeviceManager = false
                                                     selectedDevice = editDevice
+                                                    //devices[Index] = self.selectedDevice
                                                 }
                                             }
                                         }
@@ -332,6 +333,9 @@ struct ModelView: View {
 
     private func changeSelection(offset: Int) {
         let newIndex = Index + offset
+        if self.selectedDevice != nil {
+            devices[Index] = self.selectedDevice!
+        }
 
         if newIndex < 0 {
             Index = devices.endIndex-1
