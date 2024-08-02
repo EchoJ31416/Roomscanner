@@ -20,10 +20,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     var exportUrl: URL?
     var sessionConfig: RoomCaptureSession.Configuration
     var finalResult: CapturedRoom?
-    var deviceID: Int = 0
     var wallTransforms: [simd_float4x4] = []
-    
-    var deviceLocations: [Device] = []
   
     init() {
         roomCaptureView = RoomCaptureView(frame: CGRect(x: 0, y: 0, width: 42, height: 42))
@@ -53,13 +50,6 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         for wall in walls{
             self.wallTransforms.append(wall.transform)
         }
-        let maxHeight = self.highestPoint()
-        for device in self.deviceLocations {
-            if device.getOnCeiling() {
-                var oldLocation = device.getLocation()
-                device.setLocation(location: simd_make_float3(oldLocation.x, maxHeight, oldLocation.z))
-            }
-        }
         self.export()
     }
   
@@ -71,36 +61,6 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
             print("Error exporting usdz scan.")
             return
         }
-    }
-    
-    func generateCSV() -> URL {
-        var fileURL: URL!
-        // heading of CSV file.
-        let heading = "Tag, X (m), Y (m), Z (m), Device Category, Air Flow Direction, On Ceiling, Width (cm), Height/Depth (cm), Air Source, Air Conditioner Type, Air Supply Type, Window Type, Door Type, How Open\n"
-        
-        // file rows
-        let rows = deviceLocations.map { "\($0.getTag()),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.getType()),\($0.getDirection()),\($0.getOnCeiling()),\($0.getWidth()),\($0.getHeight()),\($0.getAirSource()),\($0.getConditionerType()),\($0.getSupplierType()),\($0.getWindowType()),\($0.getDoorType()),\($0.getOpenType())" }
-        
-        // rows to string data
-        let stringData = heading + rows.joined(separator: "\n")
-        
-        do {
-            
-            let path = try FileManager.default.url(for: .documentDirectory,
-                                                   in: .allDomainsMask,
-                                                   appropriateFor: nil,
-                                                   create: false)
-            
-            fileURL = path.appendingPathComponent("Devices.csv")
-            
-            // append string data to file
-            try stringData.write(to: fileURL, atomically: true , encoding: .utf8)
-            print(fileURL!)
-            
-        } catch {
-            print("error generating csv file")
-        }
-        return fileURL
     }
     
     func getLocation() -> simd_float3 {
@@ -150,20 +110,6 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
             }
         }
         return [180*xAngle/Float.pi, xCos, yCosAngle, ySinAngle, yFinalAngle]
-    }
-    
-    func addDevice(device: Device){
-        //var device = Device(location: position, tag: deviceID)
-        if device.getTag() == -1{
-            device.setTag(tag: deviceID)
-            deviceID = deviceID + 1
-        }
-        deviceLocations.append(device)
-        //let deviceAnchor = AnchorEntity(world: position)
-    }
-    
-    func clearDevices() {
-        deviceLocations = []
     }
     
     func clearResults() {

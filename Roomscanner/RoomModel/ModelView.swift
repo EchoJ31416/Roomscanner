@@ -8,19 +8,20 @@ import SceneKit.ModelIO
 
 struct ModelView: View {
     @Environment(RoomCaptureController.self) private var captureController
-    @State private var showingDeviceManager: Bool = false
-    var devices: [Device] = []
+    @State private var showingDeviceManager = false
+    @State private var editDevice = Device.emptyDevice
+    @State private var selectedDevice: Device? = nil
+    @State var Index = 0
+    @Binding var devices: [Device]
     var wallTransforms: [simd_float4x4] = []
     var scene = makeScene()
     var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
     var exportURL = FileManager.default.temporaryDirectory.appending(path: "room.usdz")
     @State var showShareSheet = false
-    @ObservedObject var viewModel = ViewModel()
     @Environment(\.presentationMode) var presentationMode
     
     
-    init(devices: [Device], wallTransforms: [simd_float4x4]){
-        viewModel.deviceList = devices
+    init(devices: Binding<[Device]>, wallTransforms: [simd_float4x4], highPoint: Float){
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
@@ -38,8 +39,13 @@ struct ModelView: View {
             scene?.rootNode.addChildNode(wallNode)
         }
         
-        self.devices = devices
-        for device in self.devices{
+        self._devices = devices
+
+        for var device in self.devices{
+            if device.onCeiling {
+                var oldLocation = device.getLocation()
+                device.setLocation(location: simd_make_float3(oldLocation.x, highPoint, oldLocation.z))
+            }
             scene?.rootNode.addChildNode(addDevice(device: device))
         }
     }
@@ -56,13 +62,13 @@ struct ModelView: View {
         ZStack {
             SceneView(
                 scene: scene,
-                pointOfView: setUpCamera(device: viewModel.selectedDevice),
-                options: viewModel.selectedDevice == nil ? [.allowsCameraControl] : []
+                pointOfView: setUpCamera(device: selectedDevice),
+                options: selectedDevice == nil ? [.allowsCameraControl] : []
             )
             .background(Color.white)
             .edgesIgnoringSafeArea(.all)
             .navigationBarItems(trailing: Button("Done") {
-                captureController.clearDevices()
+                devices = []
                 captureController.clearResults()
                 //captureController.stopSession()
                 presentationMode.wrappedValue.dismiss()
@@ -83,7 +89,7 @@ struct ModelView: View {
                             }
                         })
                     Spacer()
-                    ShareLink(item:captureController.generateCSV()) {
+                    ShareLink(item:generateCSV()) {
                         Label("Export CSV", systemImage: "list.bullet.rectangle.portrait")
                     }
                     .buttonStyle(.borderedProminent)
@@ -97,25 +103,32 @@ struct ModelView: View {
                 HStack {
                     if devices.count != 0{
                         HStack {
-                            Button(action: viewModel.selectPreviousDevice) {
+                            Button(action: {
+                                selectPreviousDevice()
+                            }) {
                                 Image(systemName: "arrow.backward.circle.fill")
                             }
-                            Button(action: viewModel.selectNextDevice) {
+                            Button(action: {
+                                selectNextDevice()
+                            }) {
                                 Image(systemName: "arrow.forward.circle.fill")
                             }
                         }
                     }
-                    if let device = viewModel.selectedDevice {
+                    if selectedDevice != nil {
+                        @State var device = selectedDevice!
                         Spacer()
-                        Text("Device Tag: \(device.getTag())")
+                        Text("Device Tag: \(device.tag)")
                         Spacer()
                         let location = device.getLocation()
                         Text("\(device.getAngle()), \(getWallYAngle()), \(device.getAngle() - getWallYAngle())")
                         Spacer()
-                        Text("Type: \(device.getType())")
+                        Text("Type: \(device.type.stringValue)")
                         Spacer()
                         Button(action: {
-                            showingDeviceManager.toggle()
+                            showingDeviceManager = true
+                            editDevice = selectedDevice!
+                            
                         }, label: {
                             Text("Edit Device").font(.title2)
                         })  .buttonStyle(.borderedProminent)
@@ -123,11 +136,29 @@ struct ModelView: View {
                             .opacity(1)
                             .padding()
                             .sheet(isPresented: $showingDeviceManager, content:{
-                                DeviceEditorView(onScreen: $showingDeviceManager)
+                                NavigationStack {
+                                    DeviceView(device: $editDevice)
+                                        //.navigationTitle(device.tag)
+                                        .toolbar {
+                                            ToolbarItem(placement: .cancellationAction) {
+                                                Button("Cancel") {
+                                                    showingDeviceManager = false
+                                                }
+                                            }
+                                            ToolbarItem(placement: .confirmationAction) {
+                                                Button("Done") {
+                                                    showingDeviceManager = false
+                                                    selectedDevice = editDevice
+                                                    //devices[Index] = self.selectedDevice
+                                                }
+                                            }
+                                        }
+                                }
                             })
+
                         
-                        if viewModel.selectedDevice != nil {
-                            Button(action: viewModel.clearSelection) {
+                        if selectedDevice != nil {
+                            Button(action: clearSelection) {
                                 Image(systemName: "xmark.circle.fill")
                             }
                         }
@@ -159,7 +190,7 @@ struct ModelView: View {
     }
   
     func deviceNode(device: Device) -> SCNNode? {
-        scene?.rootNode.childNode(withName: "Device: \(device.getTag())", recursively: false)
+        scene?.rootNode.childNode(withName: "Device: \(device.tag)", recursively: false)
     }
     
     func export() {
@@ -168,53 +199,9 @@ struct ModelView: View {
         showShareSheet = true
     }
     
-    func rotateX(initial: simd_float4x4, degrees: Float) -> simd_float4x4 {
-        var degrees = degrees/180 * Float.pi
-        var initColumns: [simd_float3] = []
-        initColumns.append(simd_make_float3(initial.columns.0))
-        initColumns.append(simd_make_float3(initial.columns.1))
-        initColumns.append(simd_make_float3(initial.columns.2))
-        var smallMatrix = simd_float3x3(initColumns)
-        var rotateMatrix = simd_float3x3(simd_make_float3(1, 0, 0), simd_make_float3(0, cos(degrees), -sin(degrees)), simd_make_float3(0, sin(degrees), cos(degrees)))
-        var normalMatrix = smallMatrix*rotateMatrix//inverseMatrix.transpose
-        var newColumns: [simd_float4] = []
-        newColumns.append(simd_make_float4(normalMatrix.columns.0))
-        newColumns.append(simd_make_float4(normalMatrix.columns.1))
-        newColumns.append(simd_make_float4(normalMatrix.columns.2))
-        newColumns.append(initial.columns.3)
-        return simd_float4x4(newColumns)
-    }
-    
-    func setToFlat(initial: simd_float4x4) -> simd_float4x4{
-        var flatMatrix = simd_float3x3(simd_make_float3(1, 0, 0), simd_make_float3(0, 0, -1), simd_make_float3(0, 1, 0))
-        var newColumns: [simd_float4] = []
-        newColumns.append(simd_make_float4(flatMatrix.columns.0))
-        newColumns.append(simd_make_float4(flatMatrix.columns.1))
-        newColumns.append(simd_make_float4(flatMatrix.columns.2))
-        newColumns.append(initial.columns.3)
-        return simd_float4x4(newColumns)
-    }
-    
-    func rotateY(initial: simd_float4x4, degrees: Float) -> simd_float4x4 {
-        var degrees = degrees/180 * Float.pi
-        var initColumns: [simd_float3] = []
-        initColumns.append(simd_make_float3(initial.columns.0))
-        initColumns.append(simd_make_float3(initial.columns.1))
-        initColumns.append(simd_make_float3(initial.columns.2))
-        var smallMatrix = simd_float3x3(initColumns)
-        var rotateMatrix = simd_float3x3(simd_make_float3(cos(degrees), 0, sin(degrees)), simd_make_float3(0, 1, 0), simd_make_float3(-sin(degrees), 0, cos(degrees)))
-        var normalMatrix = smallMatrix*rotateMatrix//inverseMatrix.transpose
-        var newColumns: [simd_float4] = []
-        newColumns.append(simd_make_float4(normalMatrix.columns.0))
-        newColumns.append(simd_make_float4(normalMatrix.columns.1))
-        newColumns.append(simd_make_float4(normalMatrix.columns.2))
-        newColumns.append(initial.columns.3)
-        return simd_float4x4(newColumns)
-    }
-    
     func addDevice(device: Device) -> SCNNode {
         var color: UIColor
-        switch device.getRawType() {
+        switch device.type {
         case .Sensor: color = UIColor.black
         case .AirConditioning: color = UIColor.blue
         case .Heater: color = UIColor.green
@@ -228,15 +215,15 @@ struct ModelView: View {
         var node: SCNNode = SCNNode()
         node.castsShadow = true
         node.simdPosition = device.getLocation()
-        node.name = "Device: \(device.getTag())"
+        node.name = "Device: \(device.tag)"
         var geometry = SCNGeometry()
         geometry = SCNSphere(radius: 0.04)
-        if ((device.getRawType() != Device.category.Sensor) && (device.getRawType() != Device.category.Heater)){
-            geometry = SCNPlane(width: CGFloat(device.getWidth()/100), height: CGFloat(device.getHeight()/100))
+        if ((device.type != Category.Sensor) && (device.type != Category.Heater)){
+            geometry = SCNPlane(width: CGFloat(device.width/100), height: CGFloat(device.height/100))
             geometry.firstMaterial?.isDoubleSided = true
             node.simdTransform = parallel(inWall: node.simdTransform, paraWall: self.wallTransforms[0])
             var angleDiff = device.getAngle() - getWallYAngle()
-            switch device.getRawDirection() {
+            switch device.direction{
             case .Up:
                 node.simdTransform = rotateX(initial: node.simdTransform, degrees: 90)
             case .Down:
@@ -311,19 +298,6 @@ struct ModelView: View {
         return minWall
     }
     
-    func parallel(inWall: simd_float4x4, paraWall: simd_float4x4) -> simd_float4x4{
-        var initColumns: [simd_float3] = []
-        initColumns.append(simd_make_float3(paraWall.columns.0))
-        initColumns.append(simd_make_float3(paraWall.columns.1))
-        initColumns.append(simd_make_float3(paraWall.columns.2))
-        var newColumns: [simd_float4] = []
-        newColumns.append(simd_make_float4(initColumns[0]))
-        newColumns.append(simd_make_float4(initColumns[1]))
-        newColumns.append(simd_make_float4(initColumns[2]))
-        newColumns.append(inWall.columns.3)
-        return simd_float4x4(newColumns)
-    }
-    
     func getWallYAngle() -> Float {
         let ySinAngle = 180*asin(-wallTransforms[0].columns.2[0])/Float.pi
         let xAngle = atan2(wallTransforms[0].columns.2[1], wallTransforms[0].columns.2[2])
@@ -343,5 +317,63 @@ struct ModelView: View {
             }
         }
         return yFinalAngle
+    }
+    
+    func selectNextDevice() {
+        changeSelection(offset: 1)
+    }
+
+    func selectPreviousDevice() {
+        changeSelection(offset: -1)
+    }
+
+    func clearSelection() {
+        selectedDevice = nil
+    }
+
+    private func changeSelection(offset: Int) {
+        let newIndex = Index + offset
+        if self.selectedDevice != nil {
+            devices[Index] = self.selectedDevice!
+        }
+
+        if newIndex < 0 {
+            Index = devices.endIndex-1
+        } else if newIndex < devices.endIndex {
+            Index = newIndex
+        } else {
+            Index = 0
+        }
+        self.selectedDevice = devices[Index]
+    }
+    
+    func generateCSV() -> URL {
+        var fileURL: URL!
+        // heading of CSV file.
+        let heading = "Tag, X (m), Y (m), Z (m), Device Category, Air Flow Direction, On Ceiling, Width (cm), Height/Depth (cm), Air Source, Air Conditioner Type, Air Supply Type, Window Type, Door Type, How Open\n"
+        
+        // file rows
+        let rows = devices.map { "\($0.tag),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.type.stringValue),\($0.direction.stringValue),\($0.onCeiling),\($0.width),\($0.height),\($0.airSource),\($0.conditioner.stringValue),\($0.supplier.stringValue),\($0.window.stringValue),\($0.door.stringValue),\($0.open.stringValue)" }
+        
+        // rows to string data
+        let stringData = heading + rows.joined(separator: "\n")
+        
+        do {
+            
+            let path = try FileManager.default.url(for: .documentDirectory,
+                                                   in: .allDomainsMask,
+                                                   appropriateFor: nil,
+                                                   create: false)
+            
+            fileURL = path.appendingPathComponent("Devices.csv")
+            
+            // append string data to file
+            try stringData.write(to: fileURL, atomically: true , encoding: .utf8)
+            print(fileURL!)
+            
+        } catch {
+            print("error generating csv file")
+        }
+        return fileURL
     }
 }
