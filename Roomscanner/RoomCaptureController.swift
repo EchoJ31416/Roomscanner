@@ -76,18 +76,6 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
         return transform
     }
     
-    func getYAngle() -> Float {
-        let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
-        let transform = currentFrame!.camera.transform
-        return 180*(asin(transform.columns.2[0])/Float.pi)
-    }
-    
-    func getXAngle() -> Float {
-        let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
-        let transform = currentFrame!.camera.transform
-        return atan2(transform.columns.2[1], transform.columns.2[2])
-    }
-    
     func getAngles() -> [Float] {
         let currentFrame = roomCaptureView.captureSession.arSession.currentFrame
         let transform = currentFrame!.camera.transform

@@ -9,12 +9,10 @@ import SwiftUI
 import ARKit
 
 struct DeviceView: View {
-    @Environment(RoomCaptureController.self) private var captureController
     @Binding var device: Device
 
     
     var body: some View {
-        @Bindable var bindableController = captureController
         VStack{
             List{
                 Picker("Device Type", selection: $device.type) {

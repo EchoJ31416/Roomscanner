@@ -29,15 +29,15 @@ struct ModelView: View {
         
         self.wallTransforms = wallTransforms
         
-        if wallTransforms.count != 0 {
-            var wallNode: SCNNode
-            var wallGeometry = SCNPyramid(width: 0.125, height: 0.3, length: 0.0625)
-            wallGeometry.firstMaterial?.diffuse.contents = UIColor.black
-            wallNode = SCNNode(geometry: wallGeometry)
-            wallNode.simdTransform = rotateX(initial: wallTransforms[0], degrees: Float(Double.pi)/2)
-            wallNode.castsShadow = true
-            scene?.rootNode.addChildNode(wallNode)
-        }
+//        if wallTransforms.count != 0 {
+//            var wallNode: SCNNode
+//            var wallGeometry = SCNPyramid(width: 0.125, height: 0.3, length: 0.0625)
+//            wallGeometry.firstMaterial?.diffuse.contents = UIColor.black
+//            wallNode = SCNNode(geometry: wallGeometry)
+//            wallNode.simdTransform = rotateX(initial: wallTransforms[0], degrees: Float(Double.pi)/2)
+//            wallNode.castsShadow = true
+//            scene?.rootNode.addChildNode(wallNode)
+//        }
         
         self._devices = devices
 
@@ -72,7 +72,7 @@ struct ModelView: View {
                 captureController.clearResults()
                 //captureController.stopSession()
                 presentationMode.wrappedValue.dismiss()
-            }.opacity(1))
+            })
             VStack {
                 HStack{
                     Button(action: {
@@ -81,7 +81,6 @@ struct ModelView: View {
                         Text("Export").font(.title2)
                     }).buttonStyle(.borderedProminent)
                         .cornerRadius(40)
-                        .opacity(1)
                         .padding()
                         .sheet(isPresented: $showShareSheet, content:{
                             ActivityView(items: [self.exportURL]).onDisappear() {
@@ -120,7 +119,6 @@ struct ModelView: View {
                         Spacer()
                         Text("Device Tag: \(device.tag)")
                         Spacer()
-                        let location = device.getLocation()
                         Text("\(device.getAngle()), \(getWallYAngle()), \(device.getAngle() - getWallYAngle())")
                         Spacer()
                         Text("Type: \(device.type.stringValue)")
@@ -128,17 +126,14 @@ struct ModelView: View {
                         Button(action: {
                             showingDeviceManager = true
                             editDevice = selectedDevice!
-                            
                         }, label: {
                             Text("Edit Device").font(.title2)
                         })  .buttonStyle(.borderedProminent)
                             .cornerRadius(40)
-                            .opacity(1)
                             .padding()
                             .sheet(isPresented: $showingDeviceManager, content:{
                                 NavigationStack {
                                     DeviceView(device: $editDevice)
-                                        //.navigationTitle(device.tag)
                                         .toolbar {
                                             ToolbarItem(placement: .cancellationAction) {
                                                 Button("Cancel") {
@@ -149,18 +144,13 @@ struct ModelView: View {
                                                 Button("Done") {
                                                     showingDeviceManager = false
                                                     selectedDevice = editDevice
-                                                    //devices[Index] = self.selectedDevice
                                                 }
                                             }
                                         }
                                 }
                             })
-
-                        
-                        if selectedDevice != nil {
-                            Button(action: clearSelection) {
-                                Image(systemName: "xmark.circle.fill")
-                            }
+                        Button(action: clearSelection) {
+                            Image(systemName: "xmark.circle.fill")
                         }
                     } else {
                         Text("No device selected")
@@ -282,20 +272,6 @@ struct ModelView: View {
         geometry.firstMaterial?.diffuse.contents = color
         node.geometry = geometry
         return node
-    }
-    
-    func closestWall(device: Device) -> simd_float4x4{
-        var location = device.getLocation()
-        var minDistance: Float = -1
-        var minWall: simd_float4x4 = simd_float4x4()
-        for wall in self.wallTransforms {
-            var wallDistance = simd_distance(location, simd_make_float3(wall.columns.3))
-            if ((wallDistance < minDistance) || (minDistance == -1)) {
-                minDistance = wallDistance
-                minWall = wall
-            }
-        }
-        return minWall
     }
     
     func getWallYAngle() -> Float {

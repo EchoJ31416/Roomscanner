@@ -68,11 +68,6 @@ struct Device: Identifiable{
         self.transform.columns.3[3] = 1
     }
     
-    func getYAngle() -> Float{
-        
-        return 180*(asin(self.transform.columns.2[0])/Float.pi)
-    }
-    
     func getAngle() -> Float{
         var ySinAngle = 180*asin(-transform.columns.2[0])/Float.pi
         var xAngle = atan2(transform.columns.2[1], transform.columns.2[2])
