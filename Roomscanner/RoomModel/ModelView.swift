@@ -9,10 +9,11 @@ import SceneKit.ModelIO
 struct ModelView: View {
     @Environment(RoomCaptureController.self) private var captureController
     @State private var showingDeviceManager = false
+    @State private var editDevice = Device.emptyDevice
     @State private var selectedDevice: Device? = nil
     @State private var editMode = true
     @State var Index = 0
-    var devices: [Device] = []
+    @Binding var devices: [Device]
     var wallTransforms: [simd_float4x4] = []
     var scene = makeScene()
     var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
@@ -21,7 +22,7 @@ struct ModelView: View {
     @Environment(\.presentationMode) var presentationMode
     
     
-    init(devices: [Device], wallTransforms: [simd_float4x4]){
+    init(devices: Binding<[Device]>, wallTransforms: [simd_float4x4], highPoint: Float){
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
@@ -39,8 +40,13 @@ struct ModelView: View {
             scene?.rootNode.addChildNode(wallNode)
         }
         
-        self.devices = devices
-        for device in self.devices{
+        self._devices = devices
+
+        for var device in self.devices{
+            if device.onCeiling {
+                var oldLocation = device.getLocation()
+                device.setLocation(location: simd_make_float3(oldLocation.x, highPoint, oldLocation.z))
+            }
             scene?.rootNode.addChildNode(addDevice(device: device))
         }
     }
@@ -63,7 +69,7 @@ struct ModelView: View {
             .background(Color.white)
             .edgesIgnoringSafeArea(.all)
             .navigationBarItems(trailing: Button("Done") {
-                captureController.clearDevices()
+                devices = []
                 captureController.clearResults()
                 //captureController.stopSession()
                 presentationMode.wrappedValue.dismiss()
@@ -84,7 +90,7 @@ struct ModelView: View {
                             }
                         })
                     Spacer()
-                    ShareLink(item:captureController.generateCSV()) {
+                    ShareLink(item:generateCSV()) {
                         Label("Export CSV", systemImage: "list.bullet.rectangle.portrait")
                     }
                     .buttonStyle(.borderedProminent)
@@ -121,7 +127,9 @@ struct ModelView: View {
                         Text("Type: \(device.type.stringValue)")
                         Spacer()
                         Button(action: {
-                            showingDeviceManager.toggle()
+                            showingDeviceManager = true
+                            editDevice = selectedDevice!
+                            
                         }, label: {
                             Text("Edit Device").font(.title2)
                         })  .buttonStyle(.borderedProminent)
@@ -129,7 +137,23 @@ struct ModelView: View {
                             .opacity(1)
                             .padding()
                             .sheet(isPresented: $showingDeviceManager, content:{
-                                DeviceView(device: $device, onScreen: $showingDeviceManager, edit: $editMode)
+                                NavigationStack {
+                                    DeviceView(device: $editDevice)
+                                        //.navigationTitle(device.tag)
+                                        .toolbar {
+                                            ToolbarItem(placement: .cancellationAction) {
+                                                Button("Cancel") {
+                                                    showingDeviceManager = false
+                                                }
+                                            }
+                                            ToolbarItem(placement: .confirmationAction) {
+                                                Button("Done") {
+                                                    showingDeviceManager = false
+                                                    selectedDevice = editDevice
+                                                }
+                                            }
+                                        }
+                                }
                             })
 
                         
@@ -318,5 +342,35 @@ struct ModelView: View {
             Index = 0
         }
         self.selectedDevice = devices[Index]
+    }
+    
+    func generateCSV() -> URL {
+        var fileURL: URL!
+        // heading of CSV file.
+        let heading = "Tag, X (m), Y (m), Z (m), Device Category, Air Flow Direction, On Ceiling, Width (cm), Height/Depth (cm), Air Source, Air Conditioner Type, Air Supply Type, Window Type, Door Type, How Open\n"
+        
+        // file rows
+        let rows = devices.map { "\($0.tag),\($0.getLocation().x),\($0.getLocation().y),\($0.getLocation().z),\($0.type.stringValue),\($0.direction.stringValue),\($0.onCeiling),\($0.width),\($0.height),\($0.airSource),\($0.conditioner.stringValue),\($0.supplier.stringValue),\($0.window.stringValue),\($0.door.stringValue),\($0.open.stringValue)" }
+        
+        // rows to string data
+        let stringData = heading + rows.joined(separator: "\n")
+        
+        do {
+            
+            let path = try FileManager.default.url(for: .documentDirectory,
+                                                   in: .allDomainsMask,
+                                                   appropriateFor: nil,
+                                                   create: false)
+            
+            fileURL = path.appendingPathComponent("Devices.csv")
+            
+            // append string data to file
+            try stringData.write(to: fileURL, atomically: true , encoding: .utf8)
+            print(fileURL!)
+            
+        } catch {
+            print("error generating csv file")
+        }
+        return fileURL
     }
 }

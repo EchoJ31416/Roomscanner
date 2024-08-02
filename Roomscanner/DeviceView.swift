@@ -10,11 +10,8 @@ import ARKit
 
 struct DeviceView: View {
     @Environment(RoomCaptureController.self) private var captureController
-    @State private var editMode = false
     @Binding var device: Device
-    @Binding var onScreen: Bool
-    @Binding var edit: Bool
-    
+
     
     var body: some View {
         @Bindable var bindableController = captureController
@@ -106,18 +103,6 @@ struct DeviceView: View {
                     }.onDisappear(perform: {device.onCeiling = false})
                 }
             }
-            Button(action: {
-                if !edit {
-                    device.transform = captureController.getTransform()
-                    captureController.addDevice(device: device)
-                    device = Device()
-                }
-                onScreen = false
-            }, label: {
-                Text(edit ? "Edit" : "Done").font(.title2)
-            })  .buttonStyle(.borderedProminent)
-                .cornerRadius(40)
-                .padding()
         }
     }
     

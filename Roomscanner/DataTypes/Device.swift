@@ -9,7 +9,8 @@ import Foundation
 import RealityKit
 import RoomPlan
 
-struct Device{
+struct Device: Identifiable{
+    let id: UUID
     var transform: simd_float4x4
     var tag: Int
     var onCeiling: Bool
@@ -24,7 +25,10 @@ struct Device{
     var door = Door.NA
     var open = Open.NA
     
+    
+    
     init(
+        id: UUID = UUID(),
          transform: simd_float4x4 = simd_float4x4(0),
          tag: Int = 0,
          onCeiling: Bool = false,
@@ -39,6 +43,7 @@ struct Device{
          door: Door = .NA,
          open: Open = .NA)
     {
+        self.id = id
         self.transform = transform
         self.tag = tag
         self.onCeiling = onCeiling
@@ -87,6 +92,12 @@ struct Device{
             }
         }
         return yFinalAngle
+    }
+}
+
+extension Device{
+    static var emptyDevice: Device {
+        Device()
     }
 }
 
