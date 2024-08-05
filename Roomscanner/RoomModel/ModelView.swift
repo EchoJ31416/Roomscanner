@@ -43,7 +43,7 @@ struct ModelView: View {
 
         for var device in self.devices{
             if device.onCeiling {
-                var oldLocation = device.getLocation()
+                let oldLocation = device.getLocation()
                 device.setLocation(location: simd_make_float3(oldLocation.x, highPoint, oldLocation.z))
             }
             scene?.rootNode.addChildNode(addDevice(device: device))
@@ -172,15 +172,16 @@ struct ModelView: View {
             let constraint = SCNLookAtConstraint(target: deviceNode)
             cameraNode?.constraints = [constraint]
             let globalPosition = deviceNode
-                .convertPosition(SCNVector3(x: 5, y: 1, z: 0), to: nil)
+                .convertPosition(SCNVector3(x: 3, y: 1, z: 0), to: nil)
             let move = SCNAction.move(to: globalPosition, duration: 1.0)
             cameraNode?.runAction(move)
+            //cameraNode?.constraints=[]
         }
         return cameraNode
     }
   
     func deviceNode(device: Device) -> SCNNode? {
-        scene?.rootNode.childNode(withName: "Device: \(device.tag)", recursively: false)
+        scene?.rootNode.childNode(withName: "Device: \(device.id)", recursively: false)
     }
     
     func export() {
@@ -205,7 +206,7 @@ struct ModelView: View {
         var node: SCNNode = SCNNode()
         node.castsShadow = true
         node.simdPosition = device.getLocation()
-        node.name = "Device: \(device.tag)"
+        node.name = "Device: \(device.id)"
         var geometry = SCNGeometry()
         geometry = SCNSphere(radius: 0.04)
         if ((device.type != Category.Sensor) && (device.type != Category.Heater)){
@@ -270,6 +271,7 @@ struct ModelView: View {
         }
         
         geometry.firstMaterial?.diffuse.contents = color
+        //geometry.firstMaterial?.specular.contents = UIColor.black
         node.geometry = geometry
         return node
     }
@@ -304,6 +306,9 @@ struct ModelView: View {
     }
 
     func clearSelection() {
+        if self.selectedDevice != nil {
+            devices[Index] = self.selectedDevice!
+        }
         selectedDevice = nil
     }
 
