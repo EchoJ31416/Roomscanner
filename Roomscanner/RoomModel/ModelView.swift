@@ -25,6 +25,7 @@ struct ModelView: View {
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
+        assetNode.name = "background"
         scene?.rootNode.addChildNode(assetNode)
         
         self.wallTransforms = wallTransforms
@@ -100,6 +101,13 @@ struct ModelView: View {
                 Spacer()
                 
                 HStack {
+                    Button(action: {
+                        self.switchProjection()
+                    }, label: {
+                        Text("Switch Style").font(.title2)
+                    }).buttonStyle(.borderedProminent)
+                        .cornerRadius(40)
+                        .padding()
                     if devices.count != 0{
                         HStack {
                             Button(action: {
@@ -144,6 +152,7 @@ struct ModelView: View {
                                                 Button("Done") {
                                                     showingDeviceManager = false
                                                     selectedDevice = editDevice
+                                                    devices[Index] = editDevice
                                                 }
                                             }
                                         }
@@ -167,17 +176,31 @@ struct ModelView: View {
     func setUpCamera(device: Device?) -> SCNNode? {
         let cameraNode = scene?.rootNode
             .childNode(withName: "camera", recursively: false)
+        cameraNode?.camera?.usesOrthographicProjection = true
     
         if let deviceNode = device.flatMap(deviceNode(device:)) {
             let constraint = SCNLookAtConstraint(target: deviceNode)
             cameraNode?.constraints = [constraint]
             let globalPosition = deviceNode
-                .convertPosition(SCNVector3(x: 3, y: 1, z: 0), to: nil)
+                .convertPosition(SCNVector3(x: 1, y: 0, z: 0), to: nil)
             let move = SCNAction.move(to: globalPosition, duration: 1.0)
             cameraNode?.runAction(move)
             //cameraNode?.constraints=[]
+        } else {
+            var backgroundNode = scene?.rootNode.childNode(withName: "background", recursively: false)
+            //backgroundNode.p
+            var settingPosition = backgroundNode!.worldPosition//SCNVector3(x:0, y:5, z:0)
+            settingPosition.y += 5
+            cameraNode?.worldPosition = settingPosition
         }
         return cameraNode
+    }
+    
+    func switchProjection() {
+        let cameraNode = scene?.rootNode
+            .childNode(withName: "camera", recursively: false)
+        cameraNode?.camera?.usesOrthographicProjection.toggle()
+        
     }
   
     func deviceNode(device: Device) -> SCNNode? {
@@ -306,17 +329,17 @@ struct ModelView: View {
     }
 
     func clearSelection() {
-        if self.selectedDevice != nil {
-            devices[Index] = self.selectedDevice!
-        }
+//        if self.selectedDevice != nil {
+//            devices[Index] = self.selectedDevice!
+//        }
         selectedDevice = nil
     }
 
     private func changeSelection(offset: Int) {
         let newIndex = Index + offset
-        if self.selectedDevice != nil {
-            devices[Index] = self.selectedDevice!
-        }
+//        if self.selectedDevice != nil {
+//            devices[Index] = self.selectedDevice!
+//        }
 
         if newIndex < 0 {
             Index = devices.endIndex-1
