@@ -66,7 +66,7 @@ struct ScanningView: View {
                 }
             HStack{
                 if captureController.finalResult != nil {
-                    NavigationLink(destination: ModelView(devices: $devices, wallTransforms: captureController.wallTransforms, highPoint: captureController.highestPoint()), label: {Text("Show 3D Model")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
+                    NavigationLink(destination: ModelView(devices: $devices, wallTransforms: captureController.wallTransforms, highPoint: captureController.highestPoint(), floorTransforms: captureController.floorTransforms), label: {Text("Show 3D Model")}).buttonStyle(.borderedProminent).cornerRadius(40).font(.title2)
                         .opacity((captureController.finalResult != nil) ? 1 : 0)
                         .padding(.leading)
                 }

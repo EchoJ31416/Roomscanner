@@ -14,6 +14,8 @@ struct ModelView: View {
     @State var Index = 0
     @Binding var devices: [Device]
     var wallTransforms: [simd_float4x4] = []
+    var floorTransforms: [simd_float4x4] = []
+    @State private var cameraAngle = simd_float3()
     var scene = makeScene()
     var importURL = FileManager.default.temporaryDirectory.appending(path: "scan.usdz")
     var exportURL = FileManager.default.temporaryDirectory.appending(path: "room.usdz")
@@ -21,7 +23,7 @@ struct ModelView: View {
     @Environment(\.presentationMode) var presentationMode
     
     
-    init(devices: Binding<[Device]>, wallTransforms: [simd_float4x4], highPoint: Float){
+    init(devices: Binding<[Device]>, wallTransforms: [simd_float4x4], highPoint: Float, floorTransforms: [simd_float4x4]){
         let mdlAsset = MDLAsset(url: importURL)
         let asset = mdlAsset.object(at: 0) // extract first object
         let assetNode = SCNNode(mdlObject: asset)
@@ -29,6 +31,7 @@ struct ModelView: View {
         scene?.rootNode.addChildNode(assetNode)
         
         self.wallTransforms = wallTransforms
+        self.floorTransforms = floorTransforms
         
 //        if wallTransforms.count != 0 {
 //            var wallNode: SCNNode
@@ -89,6 +92,14 @@ struct ModelView: View {
                             }
                         })
                     Spacer()
+//                    Button(action:{
+//                        cameraAngle = self.getCameraAngle()
+//                    }, label: {
+//                        Text("\(cameraAngle)")
+//                    }).buttonStyle(.borderedProminent)
+//                        .cornerRadius(40)
+//                        .padding()
+//                    Spacer()
                     ShareLink(item:generateCSV()) {
                         Label("Export CSV", systemImage: "list.bullet.rectangle.portrait")
                     }
@@ -187,14 +198,22 @@ struct ModelView: View {
             cameraNode?.runAction(move)
             //cameraNode?.constraints=[]
         } else {
-            var backgroundNode = scene?.rootNode.childNode(withName: "background", recursively: false)
+            //var backgroundNode = scene?.rootNode.childNode(withName: "background", recursively: false)
             //backgroundNode.p
-            var settingPosition = backgroundNode!.worldPosition//SCNVector3(x:0, y:5, z:0)
-            settingPosition.y += 5
-            cameraNode?.worldPosition = settingPosition
+            var settingPosition = self.floorTransforms[0].columns.3//backgroundNode!.worldPosition//SCNVector3(x:0, y:5, z:0)
+            settingPosition.x += 0
+            settingPosition.y += 7
+            settingPosition.z += 0
+            cameraNode?.simdPosition = simd_make_float3(settingPosition)
         }
         return cameraNode
     }
+    
+//    func getCameraAngle() -> simd_float3{
+//        var cameraNode = scene?.rootNode
+//            .childNode(withName: "camera", recursively: false)
+//        return scene?.rootNode.camera
+//    }
     
     func switchProjection() {
         let cameraNode = scene?.rootNode
@@ -329,17 +348,11 @@ struct ModelView: View {
     }
 
     func clearSelection() {
-//        if self.selectedDevice != nil {
-//            devices[Index] = self.selectedDevice!
-//        }
         selectedDevice = nil
     }
 
     private func changeSelection(offset: Int) {
         let newIndex = Index + offset
-//        if self.selectedDevice != nil {
-//            devices[Index] = self.selectedDevice!
-//        }
 
         if newIndex < 0 {
             Index = devices.endIndex-1

@@ -21,6 +21,7 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     var sessionConfig: RoomCaptureSession.Configuration
     var finalResult: CapturedRoom?
     var wallTransforms: [simd_float4x4] = []
+    var floorTransforms: [simd_float4x4] = []
   
     init() {
         roomCaptureView = RoomCaptureView(frame: CGRect(x: 0, y: 0, width: 42, height: 42))
@@ -47,8 +48,12 @@ class RoomCaptureController: RoomCaptureViewDelegate, RoomCaptureSessionDelegate
     func captureView(didPresent processedResult: CapturedRoom, error: Error?) {
         finalResult = processedResult
         var walls = finalResult!.walls
+        var floors = finalResult!.floors
         for wall in walls{
             self.wallTransforms.append(wall.transform)
+        }
+        for floor in floors{
+            self.floorTransforms.append(floor.transform)
         }
         self.export()
     }
