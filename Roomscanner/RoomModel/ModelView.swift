@@ -92,14 +92,29 @@ struct ModelView: View {
                             }
                         })
                     Spacer()
-//                    Button(action:{
-//                        cameraAngle = self.getCameraAngle()
-//                    }, label: {
-//                        Text("\(cameraAngle)")
-//                    }).buttonStyle(.borderedProminent)
-//                        .cornerRadius(40)
-//                        .padding()
-//                    Spacer()
+                    
+                    if selectedDevice != nil{
+                        Button(action: {
+                            var location = selectedDevice!.getLocation()
+                            location.y += 0.1
+                            selectedDevice?.setLocation(location: location)
+                            devices[Index] = selectedDevice!
+                        }, label: {
+                            Text("Move up").font(.title2)
+                        }).buttonStyle(.borderedProminent)
+                            .cornerRadius(40)
+                            .padding()
+                    }
+                    
+                    Spacer()
+                    //                    Button(action:{
+                    //                        cameraAngle = self.getCameraAngle()
+                    //                    }, label: {
+                    //                        Text("\(cameraAngle)")
+                    //                    }).buttonStyle(.borderedProminent)
+                    //                        .cornerRadius(40)
+                    //                        .padding()
+                    //                    Spacer()
                     ShareLink(item:generateCSV()) {
                         Label("Export CSV", systemImage: "list.bullet.rectangle.portrait")
                     }
@@ -108,8 +123,22 @@ struct ModelView: View {
                     .padding()
                     
                 }
+                
+                
                     
                 Spacer()
+                if selectedDevice != nil{
+                    Button(action: {
+                        var location = selectedDevice!.getLocation()
+                        location.y -= 0.1
+                        selectedDevice?.setLocation(location: location)
+                        devices[Index] = selectedDevice!
+                    }, label: {
+                        Text("Move down").font(.title2)
+                    }).buttonStyle(.borderedProminent)
+                        .cornerRadius(40)
+                        .padding()
+                }
                 
                 HStack {
                     Button(action: {
